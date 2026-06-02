@@ -20,6 +20,7 @@ import {
   BookOpen,
   MessageSquare,
   PlayCircle,
+  Link2,
 } from "lucide-react";
 import { clsx } from "clsx";
 
@@ -40,6 +41,7 @@ const navItems = [
       { label: "Demos", href: "/admin/demos", icon: PlayCircle },
       { label: "Installation Guides", href: "/admin/installation-guides", icon: Download },
       { label: "Release Notes", href: "/admin/release-notes", icon: Megaphone },
+      { label: "External Links", href: "/admin/external-links", icon: Link2 },
     ],
   },
 ];

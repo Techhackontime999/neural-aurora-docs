@@ -18,9 +18,18 @@ interface CategorySection {
   items: PageItem[];
 }
 
+interface ExternalLinkItem {
+  id: string;
+  title: string;
+  url: string;
+  icon: string;
+  sort_order: number;
+}
+
 export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const [sections, setSections] = useState<CategorySection[]>([]);
+  const [externalLinks, setExternalLinks] = useState<ExternalLinkItem[]>([]);
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,14 +38,16 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
 
     const load = async () => {
       try {
-        const [catRes, docRes] = await Promise.all([
+        const [catRes, docRes, linkRes] = await Promise.all([
           fetch("/api/categories"),
           fetch("/api/docs"),
+          fetch("/api/external-links"),
         ]);
 
-        const [catData, docData] = await Promise.all([
+        const [catData, docData, linkData] = await Promise.all([
           catRes.json(),
           docRes.json(),
+          linkRes.json(),
         ]);
 
         if (cancelled) return;
@@ -65,6 +76,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         }));
 
         setSections(result);
+        setExternalLinks(linkData.links ?? []);
         setExpandedSections(result.map((s) => s.name));
         setLoading(false);
       } catch {
@@ -171,26 +183,20 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         </div>
       )}
 
-      {!loading && sections.length > 0 && (
+      {!loading && externalLinks.length > 0 && (
         <div className="px-4 mt-6 pt-4 border-t border-slate-200 dark:border-slate-800">
-          <a
-            href="https://neural-aurora.vercel.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 hover:text-aurora-600 dark:hover:text-aurora-400 transition-colors"
-          >
-            <ExternalLink className="w-3 h-3" />
-            NEURAL AURORA Live
-          </a>
-          <a
-            href="https://wacrm.tech"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 hover:text-aurora-600 dark:hover:text-aurora-400 transition-colors mt-2"
-          >
-            <ExternalLink className="w-3 h-3" />
-            CRM Live
-          </a>
+          {externalLinks.map((link) => (
+            <a
+              key={link.id}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 hover:text-aurora-600 dark:hover:text-aurora-400 transition-colors mt-2 first:mt-0"
+            >
+              <ExternalLink className="w-3 h-3" />
+              {link.title}
+            </a>
+          ))}
         </div>
       )}
     </nav>

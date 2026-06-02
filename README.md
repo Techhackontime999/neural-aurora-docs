@@ -66,6 +66,8 @@ Run the SQL in `supabase/migrations/` against your Supabase project in order:
 3. `003_seed_misc.sql` — Seed contributors, installation guides, release notes
 4. `004_demos.sql` — Demos table
 5. `005_seed_demos.sql` — Seed demo entries
+6. `006_seed_wacrm_pages.sql` — Comprehensive Neural Aurora CRM doc pages
+7. `007_external_links.sql` — Dynamic sidebar external links (manageable via admin)
 
 Or with the Supabase CLI:
 

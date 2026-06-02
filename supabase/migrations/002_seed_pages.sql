@@ -1,6 +1,6 @@
 -- NEURAL AURORA pages
 INSERT INTO doc_pages (category_id, title, slug, content, excerpt, status, sort_order, author_id)
-SELECT '5ad28e4e-c9c4-4406-a835-aaccab92fc5a', 'Overview', 'overview',
+SELECT (SELECT id FROM doc_categories WHERE slug = 'neural-aurora'), 'Overview', 'overview',
 '<p>NEURAL AURORA is an immersive, open-source 3D portfolio website — a living neural network suspended in an aurora field. Built with React, Vite, Three.js, and Supabase, it redefines what a personal portfolio can be.</p>
 <h2>What Makes It Unique</h2>
 <ul>
@@ -21,11 +21,11 @@ SELECT '5ad28e4e-c9c4-4406-a835-aaccab92fc5a', 'Overview', 'overview',
 <tr><td>Deployment</td><td>Vercel + Docker</td></tr>
 </table>
 <p>MIT License — free to fork, modify, and deploy.</p>',
-'An immersive 3D portfolio with AI-powered features', 'published', 0, '564d1727-34d5-4930-a44b-1e2a544b22f8'
-WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'overview' AND category_id = '5ad28e4e-c9c4-4406-a835-aaccab92fc5a');
+'An immersive 3D portfolio with AI-powered features', 'published', 0, NULL
+WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'overview' AND category_id = (SELECT id FROM doc_categories WHERE slug = 'neural-aurora'));
 
 INSERT INTO doc_pages (category_id, title, slug, content, excerpt, status, sort_order, author_id)
-SELECT '5ad28e4e-c9c4-4406-a835-aaccab92fc5a', 'Getting Started', 'getting-started',
+SELECT (SELECT id FROM doc_categories WHERE slug = 'neural-aurora'), 'Getting Started', 'getting-started',
 '<h2>Prerequisites</h2>
 <ul>
 <li>Node.js 20+</li>
@@ -45,11 +45,11 @@ VITE_SUPABASE_ANON_KEY=your-anon-key</code></pre>
 <h2>Run the Development Server</h2>
 <pre><code>npm run dev</code></pre>
 <p>Open <a href="http://localhost:5173">http://localhost:5173</a> in your browser.</p>',
-'Quick setup guide to run NEURAL AURORA locally', 'published', 1, '564d1727-34d5-4930-a44b-1e2a544b22f8'
-WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'getting-started' AND category_id = '5ad28e4e-c9c4-4406-a835-aaccab92fc5a');
+'Quick setup guide to run NEURAL AURORA locally', 'published', 1, NULL
+WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'getting-started' AND category_id = (SELECT id FROM doc_categories WHERE slug = 'neural-aurora'));
 
 INSERT INTO doc_pages (category_id, title, slug, content, excerpt, status, sort_order, author_id)
-SELECT '5ad28e4e-c9c4-4406-a835-aaccab92fc5a', 'Features', 'features',
+SELECT (SELECT id FROM doc_categories WHERE slug = 'neural-aurora'), 'Features', 'features',
 '<h2>AI Gateway</h2>
 <p>The entry point to the portfolio is a puzzle that uses LLM reasoning to validate answers. This creates an engaging, game-like experience that showcases AI integration.</p>
 <h2>Neural CMD Terminal</h2>
@@ -60,11 +60,11 @@ SELECT '5ad28e4e-c9c4-4406-a835-aaccab92fc5a', 'Features', 'features',
 <p>A particle system with thousands of connected nodes that responds to mouse movement. Built with Three.js, it creates a sense of depth and interactivity that changes as you explore.</p>
 <h2>Admin Dashboard</h2>
 <p>Full CRUD management for projects, skills, blog posts, testimonials, and site configuration. Includes analytics and visitor tracking.</p>',
-'Explore the AI-powered features of NEURAL AURORA', 'published', 2, '564d1727-34d5-4930-a44b-1e2a544b22f8'
-WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'features' AND category_id = '5ad28e4e-c9c4-4406-a835-aaccab92fc5a');
+'Explore the AI-powered features of NEURAL AURORA', 'published', 2, NULL
+WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'features' AND category_id = (SELECT id FROM doc_categories WHERE slug = 'neural-aurora'));
 
 INSERT INTO doc_pages (category_id, title, slug, content, excerpt, status, sort_order, author_id)
-SELECT '5ad28e4e-c9c4-4406-a835-aaccab92fc5a', 'Setup', 'setup',
+SELECT (SELECT id FROM doc_categories WHERE slug = 'neural-aurora'), 'Setup', 'setup',
 '<h2>Configuration</h2>
 <p>After cloning, configure the following in your <code>.env</code> file:</p>
 <h3>Supabase Setup</h3>
@@ -83,11 +83,11 @@ npm run preview</code></pre>
 <h2>Docker</h2>
 <pre><code>docker build -t neural-aurora .
 docker run -p 3000:3000 neural-aurora</code></pre>',
-'Detailed setup instructions for NEURAL AURORA', 'published', 3, '564d1727-34d5-4930-a44b-1e2a544b22f8'
-WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'setup' AND category_id = '5ad28e4e-c9c4-4406-a835-aaccab92fc5a');
+'Detailed setup instructions for NEURAL AURORA', 'published', 3, NULL
+WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'setup' AND category_id = (SELECT id FROM doc_categories WHERE slug = 'neural-aurora'));
 
 INSERT INTO doc_pages (category_id, title, slug, content, excerpt, status, sort_order, author_id)
-SELECT '5ad28e4e-c9c4-4406-a835-aaccab92fc5a', 'Architecture', 'architecture',
+SELECT (SELECT id FROM doc_categories WHERE slug = 'neural-aurora'), 'Architecture', 'architecture',
 '<h2>Project Structure</h2>
 <pre><code>NEURAL-AURORA/
 ├── src/
@@ -107,11 +107,11 @@ SELECT '5ad28e4e-c9c4-4406-a835-aaccab92fc5a', 'Architecture', 'architecture',
 <p>Three.js scenes are encapsulated in the <code>src/three/</code> directory, with a custom render loop and particle system that handles thousands of nodes at 60fps.</p>
 <h2>AI Integration</h2>
 <p>The AI gateway uses server-side API calls to LLMs, keeping keys secure. Responses are streamed to the client via Server-Sent Events for a real-time feel.</p>',
-'Understanding the NEURAL AURORA codebase structure', 'published', 4, '564d1727-34d5-4930-a44b-1e2a544b22f8'
-WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'architecture' AND category_id = '5ad28e4e-c9c4-4406-a835-aaccab92fc5a');
+'Understanding the NEURAL AURORA codebase structure', 'published', 4, NULL
+WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'architecture' AND category_id = (SELECT id FROM doc_categories WHERE slug = 'neural-aurora'));
 
 INSERT INTO doc_pages (category_id, title, slug, content, excerpt, status, sort_order, author_id)
-SELECT '5ad28e4e-c9c4-4406-a835-aaccab92fc5a', 'Deployment', 'deployment',
+SELECT (SELECT id FROM doc_categories WHERE slug = 'neural-aurora'), 'Deployment', 'deployment',
 '<h2>Vercel Deployment</h2>
 <ol>
 <li>Push your fork to GitHub</li>
@@ -132,12 +132,12 @@ docker run -d -p 3000:3000 \
 <tr><td>VITE_SUPABASE_ANON_KEY</td><td>Yes</td><td>Supabase anon key</td></tr>
 <tr><td>OPENAI_API_KEY</td><td>No</td><td>For AI gateway feature</td></tr>
 </table>',
-'Deploy NEURAL AURORA to Vercel or Docker', 'published', 5, '564d1727-34d5-4930-a44b-1e2a544b22f8'
-WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'deployment' AND category_id = '5ad28e4e-c9c4-4406-a835-aaccab92fc5a');
+'Deploy NEURAL AURORA to Vercel or Docker', 'published', 5, NULL
+WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'deployment' AND category_id = (SELECT id FROM doc_categories WHERE slug = 'neural-aurora'));
 
 -- WACRM pages
 INSERT INTO doc_pages (category_id, title, slug, content, excerpt, status, sort_order, author_id)
-SELECT '14a1ed09-6521-4b74-a199-250de5ba2fb3', 'Overview', 'overview',
+SELECT (SELECT id FROM doc_categories WHERE slug = 'wacrm'), 'Overview', 'overview',
 '<p>WACRM (WhatsApp CRM Template) is a self-hostable CRM template for WhatsApp Business. It features a shared inbox, contacts management, sales pipelines, broadcast messaging, no-code automations, and a visual flow builder.</p>
 <h2>Key Capabilities</h2>
 <ul>
@@ -159,11 +159,11 @@ SELECT '14a1ed09-6521-4b74-a199-250de5ba2fb3', 'Overview', 'overview',
 <tr><td>Deployment</td><td>Vercel</td></tr>
 </table>
 <p>MIT License — fork it, brand it, host it.</p>',
-'A self-hostable WhatsApp CRM template with automations', 'published', 0, '564d1727-34d5-4930-a44b-1e2a544b22f8'
-WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'overview' AND category_id = '14a1ed09-6521-4b74-a199-250de5ba2fb3');
+'A self-hostable WhatsApp CRM template with automations', 'published', 0, NULL
+WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'overview' AND category_id = (SELECT id FROM doc_categories WHERE slug = 'wacrm'));
 
 INSERT INTO doc_pages (category_id, title, slug, content, excerpt, status, sort_order, author_id)
-SELECT '14a1ed09-6521-4b74-a199-250de5ba2fb3', 'Getting Started', 'getting-started',
+SELECT (SELECT id FROM doc_categories WHERE slug = 'wacrm'), 'Getting Started', 'getting-started',
 '<h2>Prerequisites</h2>
 <ul>
 <li>Node.js 20+</li>
@@ -184,11 +184,11 @@ npm run dev</code></pre>
 <li>Copy your project URL and anon key to <code>.env</code></li>
 </ol>
 <p>Open <a href="http://localhost:3000">http://localhost:3000</a> to see the app.</p>',
-'Quick setup guide for WACRM', 'published', 1, '564d1727-34d5-4930-a44b-1e2a544b22f8'
-WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'getting-started' AND category_id = '14a1ed09-6521-4b74-a199-250de5ba2fb3');
+'Quick setup guide for WACRM', 'published', 1, NULL
+WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'getting-started' AND category_id = (SELECT id FROM doc_categories WHERE slug = 'wacrm'));
 
 INSERT INTO doc_pages (category_id, title, slug, content, excerpt, status, sort_order, author_id)
-SELECT '14a1ed09-6521-4b74-a199-250de5ba2fb3', 'Supabase Setup', 'supabase-setup',
+SELECT (SELECT id FROM doc_categories WHERE slug = 'wacrm'), 'Supabase Setup', 'supabase-setup',
 '<h2>Create a Supabase Project</h2>
 <ol>
 <li>Go to <a href="https://supabase.com">supabase.com</a> and create a new project</li>
@@ -208,11 +208,11 @@ SELECT '14a1ed09-6521-4b74-a199-250de5ba2fb3', 'Supabase Setup', 'supabase-setup
 </ol>
 <h2>Row Level Security</h2>
 <p>RLS policies are included in the migration. All tables are protected and accessible only through authenticated API requests.</p>',
-'Configure Supabase for WACRM', 'published', 2, '564d1727-34d5-4930-a44b-1e2a544b22f8'
-WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'supabase-setup' AND category_id = '14a1ed09-6521-4b74-a199-250de5ba2fb3');
+'Configure Supabase for WACRM', 'published', 2, NULL
+WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'supabase-setup' AND category_id = (SELECT id FROM doc_categories WHERE slug = 'wacrm'));
 
 INSERT INTO doc_pages (category_id, title, slug, content, excerpt, status, sort_order, author_id)
-SELECT '14a1ed09-6521-4b74-a199-250de5ba2fb3', 'WhatsApp Setup', 'whatsapp-setup',
+SELECT (SELECT id FROM doc_categories WHERE slug = 'wacrm'), 'WhatsApp Setup', 'whatsapp-setup',
 '<h2>Meta Business Account</h2>
 <ol>
 <li>Go to <a href="https://business.facebook.com">business.facebook.com</a></li>
@@ -232,11 +232,11 @@ WHATSAPP_ACCESS_TOKEN=your-token
 WHATSAPP_WEBHOOK_VERIFY_TOKEN=your-verify-token</code></pre>
 <h2>Test the Connection</h2>
 <p>Send a test message using the WACRM dashboard. You should see incoming messages in the shared inbox.</p>',
-'Connect WhatsApp Cloud API to WACRM', 'published', 3, '564d1727-34d5-4930-a44b-1e2a544b22f8'
-WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'whatsapp-setup' AND category_id = '14a1ed09-6521-4b74-a199-250de5ba2fb3');
+'Connect WhatsApp Cloud API to WACRM', 'published', 3, NULL
+WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'whatsapp-setup' AND category_id = (SELECT id FROM doc_categories WHERE slug = 'wacrm'));
 
 INSERT INTO doc_pages (category_id, title, slug, content, excerpt, status, sort_order, author_id)
-SELECT '14a1ed09-6521-4b74-a199-250de5ba2fb3', 'Environment Variables', 'environment-variables',
+SELECT (SELECT id FROM doc_categories WHERE slug = 'wacrm'), 'Environment Variables', 'environment-variables',
 '<h2>Required Variables</h2>
 <table>
 <tr><th>Variable</th><th>Description</th></tr>
@@ -256,11 +256,11 @@ SELECT '14a1ed09-6521-4b74-a199-250de5ba2fb3', 'Environment Variables', 'environ
 <h2>Setup</h2>
 <p>Copy <code>.env.example</code> to <code>.env</code> and fill in all values:</p>
 <pre><code>cp .env.example .env</code></pre>',
-'All environment variables for WACRM', 'published', 4, '564d1727-34d5-4930-a44b-1e2a544b22f8'
-WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'environment-variables' AND category_id = '14a1ed09-6521-4b74-a199-250de5ba2fb3');
+'All environment variables for WACRM', 'published', 4, NULL
+WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'environment-variables' AND category_id = (SELECT id FROM doc_categories WHERE slug = 'wacrm'));
 
 INSERT INTO doc_pages (category_id, title, slug, content, excerpt, status, sort_order, author_id)
-SELECT '14a1ed09-6521-4b74-a199-250de5ba2fb3', 'Features', 'features',
+SELECT (SELECT id FROM doc_categories WHERE slug = 'wacrm'), 'Features', 'features',
 '<h2>Shared Inbox</h2>
 <p>All team members can view and respond to WhatsApp messages from a single, unified inbox. Assign conversations, add notes, and track response times.</p>
 <h2>Contact Management</h2>
@@ -273,11 +273,11 @@ SELECT '14a1ed09-6521-4b74-a199-250de5ba2fb3', 'Features', 'features',
 <p>Build automated workflows using triggers and actions. Example: when a contact sends "price", auto-reply with pricing PDF.</p>
 <h2>Flow Builder</h2>
 <p>Design conversational flows with a visual drag-and-drop editor. Branch based on user input, route to team members, or trigger webhooks.</p>',
-'Full feature list for WACRM', 'published', 5, '564d1727-34d5-4930-a44b-1e2a544b22f8'
-WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'features' AND category_id = '14a1ed09-6521-4b74-a199-250de5ba2fb3');
+'Full feature list for WACRM', 'published', 5, NULL
+WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'features' AND category_id = (SELECT id FROM doc_categories WHERE slug = 'wacrm'));
 
 INSERT INTO doc_pages (category_id, title, slug, content, excerpt, status, sort_order, author_id)
-SELECT '14a1ed09-6521-4b74-a199-250de5ba2fb3', 'Architecture', 'architecture',
+SELECT (SELECT id FROM doc_categories WHERE slug = 'wacrm'), 'Architecture', 'architecture',
 '<h2>Project Structure</h2>
 <pre><code>WACRM/
 ├── src/
@@ -294,11 +294,11 @@ SELECT '14a1ed09-6521-4b74-a199-250de5ba2fb3', 'Architecture', 'architecture',
 <p>WACRM uses Supabase SSR auth with cookie-based sessions. The middleware (proxy.ts) handles session refresh and route protection.</p>
 <h2>WhatsApp Webhook</h2>
 <p>Incoming messages arrive at <code>/api/whatsapp/webhook</code>. The webhook verifies the signature, processes the message, and stores it in the database. Automations and flows are evaluated on each incoming message.</p>',
-'WACRM architecture and design decisions', 'published', 6, '564d1727-34d5-4930-a44b-1e2a544b22f8'
-WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'architecture' AND category_id = '14a1ed09-6521-4b74-a199-250de5ba2fb3');
+'WACRM architecture and design decisions', 'published', 6, NULL
+WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'architecture' AND category_id = (SELECT id FROM doc_categories WHERE slug = 'wacrm'));
 
 INSERT INTO doc_pages (category_id, title, slug, content, excerpt, status, sort_order, author_id)
-SELECT '14a1ed09-6521-4b74-a199-250de5ba2fb3', 'Deployment', 'deployment',
+SELECT (SELECT id FROM doc_categories WHERE slug = 'wacrm'), 'Deployment', 'deployment',
 '<h2>Vercel Deployment</h2>
 <ol>
 <li>Push your fork to GitHub</li>
@@ -319,5 +319,5 @@ SELECT '14a1ed09-6521-4b74-a199-250de5ba2fb3', 'Deployment', 'deployment',
 <li>Set up monitoring</li>
 <li>Review auth settings</li>
 </ul>',
-'Deploy WACRM to production', 'published', 7, '564d1727-34d5-4930-a44b-1e2a544b22f8'
-WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'deployment' AND category_id = '14a1ed09-6521-4b74-a199-250de5ba2fb3');
+'Deploy WACRM to production', 'published', 7, NULL
+WHERE NOT EXISTS (SELECT 1 FROM doc_pages WHERE slug = 'deployment' AND category_id = (SELECT id FROM doc_categories WHERE slug = 'wacrm'));
