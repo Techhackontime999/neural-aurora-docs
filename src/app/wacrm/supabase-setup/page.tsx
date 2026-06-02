@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Supabase Setup — WACRM | Neural Aurora Docs",
+  title: "Supabase Setup — Neural Aurora CRM | Neural Aurora Docs",
   description:
     "Complete Supabase setup guide for WACRM — create project, apply migrations, and configure authentication.",
 };
@@ -16,12 +16,12 @@ export default function WacrmSupabaseSetup() {
         className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-aurora-600 dark:hover:text-aurora-400 transition-colors mb-6"
       >
         <ArrowLeft className="w-3 h-3" />
-        Back to WACRM overview
+        Back to overview
       </Link>
 
       <h1>Supabase Setup</h1>
       <p>
-        WACRM uses Supabase for authentication, database, storage, and
+        Neural Aurora CRM uses Supabase for authentication, database, storage, and
         real-time features. Follow this guide to create and configure your
         Supabase project.
       </p>

@@ -189,7 +189,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
             className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 hover:text-aurora-600 dark:hover:text-aurora-400 transition-colors mt-2"
           >
             <ExternalLink className="w-3 h-3" />
-            WACRM Live
+            CRM Live
           </a>
         </div>
       )}

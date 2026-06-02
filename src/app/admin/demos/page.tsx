@@ -149,7 +149,7 @@ export default function AdminDemosPage() {
               <select value={projectType} onChange={(e) => setProjectType(e.target.value as ProjectType)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500">
                 <option value="both">Both</option>
                 <option value="neural-aurora">NEURAL AURORA</option>
-                <option value="wacrm">WACRM</option>
+                <option value="wacrm">Neural Aurora CRM</option>
               </select>
             </div>
             <div className="flex items-end gap-4">

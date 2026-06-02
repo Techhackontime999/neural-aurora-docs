@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "WhatsApp Setup — WACRM | Neural Aurora Docs",
+  title: "WhatsApp Setup — Neural Aurora CRM | Neural Aurora Docs",
   description:
     "Configure WhatsApp Business API for WACRM — Meta app setup, access tokens, and webhook verification.",
 };
@@ -16,12 +16,12 @@ export default function WacrmWhatsAppSetup() {
         className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-aurora-600 dark:hover:text-aurora-400 transition-colors mb-6"
       >
         <ArrowLeft className="w-3 h-3" />
-        Back to WACRM overview
+        Back to overview
       </Link>
 
       <h1>WhatsApp Setup</h1>
       <p>
-        WACRM integrates with the official Meta Cloud API (WhatsApp Business
+        Neural Aurora CRM integrates with the official Meta Cloud API (WhatsApp Business
         API). Follow this guide to create a Meta app, generate access tokens,
         and configure the webhook.
       </p>

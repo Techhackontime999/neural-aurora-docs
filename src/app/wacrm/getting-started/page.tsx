@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Getting Started — WACRM | Neural Aurora Docs",
+  title: "Getting Started — Neural Aurora CRM | Neural Aurora Docs",
   description:
     "Quick start guide for WACRM — fork the repository, install dependencies, configure environment, and run the development server.",
 };
@@ -16,12 +16,12 @@ export default function WacrmGettingStarted() {
         className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-aurora-600 dark:hover:text-aurora-400 transition-colors mb-6"
       >
         <ArrowLeft className="w-3 h-3" />
-        Back to WACRM overview
+        Back to overview
       </Link>
 
       <h1>Getting Started</h1>
       <p>
-        Get WACRM running locally in about 15 minutes. This guide covers
+        Get Neural Aurora CRM running locally in about 15 minutes. This guide covers
         forking the repository, installing dependencies, and starting the
         development server.
       </p>

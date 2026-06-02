@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Sun, Moon, Menu, X, Search } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef, type ReactNode } from "react";
 import { clsx } from "clsx";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useAuth } from "@/hooks/use-auth";
@@ -158,39 +158,133 @@ export default function Navbar() {
 // Import Sidebar dynamically to avoid circular dependency
 import Sidebar from "./Sidebar";
 
+interface SearchItem {
+  title: string;
+  href: string;
+  category: string;
+  excerpt: string;
+  contentPlain: string;
+}
+
+function stripHtml(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#\d+;/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function highlightText(text: string, query: string): ReactNode[] {
+  if (!query) return [<span key="0">{text}</span>];
+  const parts = text.split(new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi"));
+  return parts.map((part, i) =>
+    part.toLowerCase() === query.toLowerCase()
+      ? <mark key={i} className="bg-violet-500/20 text-violet-200 rounded-sm px-0.5">{part}</mark>
+      : <span key={i}>{part}</span>
+  );
+}
+
+function getSnippet(content: string, query: string, maxLen = 120): string {
+  const idx = content.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return content.slice(0, maxLen) + (content.length > maxLen ? "..." : "");
+  const start = Math.max(0, idx - Math.floor((maxLen - query.length) / 2));
+  const end = Math.min(content.length, start + maxLen);
+  const prefix = start > 0 ? "..." : "";
+  const suffix = end < content.length ? "..." : "";
+  return prefix + content.slice(start, end) + suffix;
+}
+
 function SearchModal({ onClose }: { onClose: () => void }) {
   const [query, setQuery] = useState("");
-  const [searchItems, setSearchItems] = useState<{ title: string; href: string; category: string }[]>([]);
+  const [items, setItems] = useState<SearchItem[]>([]);
+  const [selectedIdx, setSelectedIdx] = useState(-1);
+  const listRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
 
-  useEffect(() => {
-    setQuery("");
-  }, [pathname]);
+  useEffect(() => { setQuery(""); setSelectedIdx(-1); }, [pathname]);
 
   useEffect(() => {
     fetch("/api/docs")
       .then((r) => r.json())
       .then((data) => {
         const pages = data.pages ?? [];
-        const items = pages
-          .filter((p: any) => p.status === "published")
-          .map((p: any) => ({
-            title: p.title,
-            href: `/${(p.category as any)?.slug || "uncategorized"}/${p.slug}`,
-            category: (p.category as any)?.name || "Uncategorized",
-          }));
-        setSearchItems(items);
+        setItems(
+          pages
+            .filter((p: any) => p.status === "published")
+            .map((p: any) => ({
+              title: p.title,
+              href: `/${(p.category as any)?.slug || "uncategorized"}/${p.slug}`,
+              category: (p.category as any)?.name || "Uncategorized",
+              excerpt: p.excerpt || "",
+              contentPlain: stripHtml(p.content || ""),
+            }))
+        );
       })
       .catch(() => {});
   }, []);
 
-  const filtered = query
-    ? searchItems.filter(
-        (item) =>
-          item.title.toLowerCase().includes(query.toLowerCase()) ||
-          item.category.toLowerCase().includes(query.toLowerCase())
-      )
-    : searchItems;
+  const q = query.trim().toLowerCase();
+
+  const scored = q
+    ? items
+        .map((item) => {
+          const titleMatch = item.title.toLowerCase().includes(q);
+          const excerptMatch = item.excerpt.toLowerCase().includes(q);
+          const contentMatch = item.contentPlain.toLowerCase().includes(q);
+          const catMatch = item.category.toLowerCase().includes(q);
+
+          let score = 0;
+          if (titleMatch) score += 100;
+          if (excerptMatch) score += 50;
+          if (catMatch) score += 30;
+          if (contentMatch) score += 10;
+
+          if (item.title.toLowerCase().startsWith(q)) score += 200;
+
+          return { item, score, match: titleMatch || excerptMatch || contentMatch || catMatch };
+        })
+        .filter((r) => r.match)
+        .sort((a, b) => b.score - a.score)
+    : items.map((item) => ({ item, score: 0, match: true }));
+
+  const results = scored.map((r) => r.item);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIdx((prev) => (prev < results.length - 1 ? prev + 1 : 0));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIdx((prev) => (prev > 0 ? prev - 1 : results.length - 1));
+    } else if (e.key === "Enter" && selectedIdx >= 0 && results[selectedIdx]) {
+      e.preventDefault();
+      onClose();
+      window.location.href = results[selectedIdx].href;
+    }
+  };
+
+  useEffect(() => {
+    setSelectedIdx(-1);
+  }, [query]);
+
+  useEffect(() => {
+    if (selectedIdx >= 0 && listRef.current) {
+      const el = listRef.current.children[selectedIdx] as HTMLElement;
+      el?.scrollIntoView({ block: "nearest" });
+    }
+  }, [selectedIdx]);
+
+  const grouped = results.reduce<Record<string, SearchItem[]>>((acc, item) => {
+    (acc[item.category] = acc[item.category] || []).push(item);
+    return acc;
+  }, {});
+
+  const hasQuery = q.length > 0;
 
   return (
     <>
@@ -198,43 +292,114 @@ function SearchModal({ onClose }: { onClose: () => void }) {
         className="fixed inset-0 z-50 bg-black/30 dark:bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="fixed left-1/2 top-[15%] -translate-x-1/2 z-50 w-full max-w-lg">
-        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+      <div className="fixed left-1/2 top-[12%] -translate-x-1/2 z-50 w-full max-w-xl">
+        <div
+          className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden"
+          onKeyDown={handleKeyDown}
+        >
           <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-200 dark:border-slate-700">
-            <Search className="w-4 h-4 text-slate-400" />
+            <Search className="w-4 h-4 text-slate-400 shrink-0" />
             <input
+              ref={inputRef}
               autoFocus
               type="text"
-              placeholder="Search documentation..."
+              placeholder="Search titles, content, categories..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="flex-1 bg-transparent text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none"
             />
-            <kbd className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 font-mono">
+            {hasQuery && (
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono shrink-0">
+                {results.length} results
+              </span>
+            )}
+            <kbd className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 font-mono shrink-0">
               ESC
             </kbd>
           </div>
-          <div className="max-h-80 overflow-y-auto p-2">
-            {filtered.length === 0 ? (
-              <p className="text-center text-sm text-slate-400 py-8">No results found</p>
-            ) : (
-              filtered.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={onClose}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                >
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 min-w-[80px]">
-                    {item.category}
-                  </span>
-                  <span className="text-slate-700 dark:text-slate-300">
-                    {item.title}
-                  </span>
-                </Link>
-              ))
-            )}
-          </div>
+
+          {results.length > 0 ? (
+            <div ref={listRef} className="max-h-96 overflow-y-auto p-2" role="listbox">
+              {!hasQuery ? (
+                results.map((item, i) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onClose}
+                    role="option"
+                    aria-selected={i === selectedIdx}
+                    className={`flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors ${
+                      i === selectedIdx
+                        ? "bg-violet-500/10 text-violet-700 dark:text-violet-300"
+                        : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
+                    }`}
+                  >
+                    <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500 min-w-[72px] shrink-0">
+                      {item.category}
+                    </span>
+                    <span className="truncate">{item.title}</span>
+                  </Link>
+                ))
+              ) : (
+                Object.entries(grouped).map(([category, catItems]) => (
+                  <div key={category}>
+                    <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                      {category}
+                    </div>
+                    {catItems.map((item, idx) => {
+                      const globalIdx = results.indexOf(item);
+                      const snippet = item.contentPlain
+                        ? getSnippet(item.contentPlain, q)
+                        : "";
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={onClose}
+                          role="option"
+                          aria-selected={globalIdx === selectedIdx}
+                          className={`block px-3 py-2.5 rounded-lg transition-colors ${
+                            globalIdx === selectedIdx
+                              ? "bg-violet-500/10"
+                              : "hover:bg-slate-100 dark:hover:bg-slate-800"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`text-sm font-medium ${
+                                globalIdx === selectedIdx
+                                  ? "text-violet-700 dark:text-violet-300"
+                                  : "text-slate-900 dark:text-white"
+                              }`}
+                            >
+                              {highlightText(item.title, q)}
+                            </span>
+                          </div>
+                          {snippet && (
+                            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 line-clamp-1">
+                              {highlightText(snippet, q)}
+                            </p>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ))
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center py-12 px-4">
+              <Search className="w-8 h-8 text-slate-300 dark:text-slate-600 mb-3" />
+              <p className="text-sm text-slate-400 dark:text-slate-500">
+                {hasQuery ? `No results for "${query}"` : "Start typing to search..."}
+              </p>
+              {hasQuery && (
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                  Try searching by title, content, or category name
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </>

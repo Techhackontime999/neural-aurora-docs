@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   BookOpen,
   MessageSquare,
@@ -19,7 +19,7 @@ import {
   PlayCircle,
   Film,
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { useAuth } from "@/hooks/use-auth";
 
 function GithubIcon({ className }: { className?: string }) {
@@ -29,14 +29,6 @@ function GithubIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-
-const stagger = {
-  animate: {
-    transition: {
-      staggerChildren: 0.05,
-    },
-  },
-};
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -56,6 +48,65 @@ const scaleIn = {
   },
 };
 
+const cardStagger = {
+  initial: {},
+  animate: {
+    transition: { staggerChildren: 0.06 },
+  },
+};
+
+function ScrollReveal({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ type: "spring", stiffness: 100, damping: 20 }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function ScrollStagger({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial="initial"
+      whileInView="animate"
+      viewport={{ once: true, margin: "-80px" }}
+      variants={cardStagger}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function useScrollProgress() {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const handle = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(docHeight ? Math.min(scrollTop / docHeight, 1) : 0);
+    };
+    window.addEventListener("scroll", handle, { passive: true });
+    return () => window.removeEventListener("scroll", handle);
+  }, []);
+  return progress;
+}
+
+function ScrollProgressBar() {
+  const progress = useScrollProgress();
+  return (
+    <motion.div
+      className="fixed top-0 left-0 right-0 z-[60] h-[2px] bg-gradient-to-r from-violet-500 via-purple-500 to-teal-500 origin-left"
+      style={{ scaleX: progress }}
+    />
+  );
+}
+
 const projects = [
   {
     title: "NEURAL AURORA",
@@ -71,7 +122,7 @@ const projects = [
     ],
   },
   {
-    title: "WACRM",
+    title: "Neural Aurora CRM",
     tagline: "WhatsApp CRM Template",
     description:
       "Self-hostable CRM template for WhatsApp Business with shared inbox, sales pipelines, no-code automations, and visual flow builder.",
@@ -160,7 +211,7 @@ const steps = [
 const faqs = [
   {
     q: "How do I get started?",
-    a: "Choose a project (NEURAL AURORA or WACRM), clone the repository, follow the setup guide in the docs, and you'll be up and running in minutes.",
+    a: "Choose a project (NEURAL AURORA or Neural Aurora CRM), clone the repository, follow the setup guide in the docs, and you'll be up and running in minutes.",
   },
   {
     q: "How do I access the APIs?",
@@ -176,7 +227,7 @@ const faqs = [
   },
   {
     q: "How does authentication work?",
-    a: "Authentication is handled by Supabase Auth with email/password sign-in. WACRM adds WhatsApp Cloud API token-based auth for business messaging.",
+    a: "Authentication is handled by Supabase Auth with email/password sign-in. Neural Aurora CRM adds WhatsApp Cloud API token-based auth for business messaging.",
   },
   {
     q: "Is there AI-powered search?",
@@ -185,42 +236,40 @@ const faqs = [
 ];
 
 function FloatingOrbs() {
+  const { scrollY } = useScroll();
+  const parallax1 = useTransform(scrollY, [0, 1000], [0, -80]);
+  const parallax2 = useTransform(scrollY, [0, 1000], [0, -50]);
+  const parallax3 = useTransform(scrollY, [0, 1000], [0, -30]);
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
       <motion.div
         className="absolute -top-32 -right-32 w-96 h-96 bg-violet-600/15 rounded-full blur-[120px]"
+        style={{ y: parallax1 }}
         animate={{
           x: [0, 15, -10, 0],
-          y: [0, -10, 15, 0],
         }}
         transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: "linear",
+          x: { duration: 20, repeat: Infinity, ease: "linear" },
         }}
       />
       <motion.div
         className="absolute top-1/3 -left-32 w-80 h-80 bg-blue-600/10 rounded-full blur-[100px]"
+        style={{ y: parallax2 }}
         animate={{
           x: [0, -15, 10, 0],
-          y: [0, 10, -15, 0],
         }}
         transition={{
-          duration: 25,
-          repeat: Infinity,
-          ease: "linear",
+          x: { duration: 25, repeat: Infinity, ease: "linear" },
         }}
       />
       <motion.div
         className="absolute bottom-0 right-1/4 w-64 h-64 bg-fuchsia-600/8 rounded-full blur-[80px]"
+        style={{ y: parallax3 }}
         animate={{
           x: [0, 10, -5, 0],
-          y: [0, -5, 10, 0],
         }}
         transition={{
-          duration: 18,
-          repeat: Infinity,
-          ease: "linear",
+          x: { duration: 18, repeat: Infinity, ease: "linear" },
         }}
       />
     </div>
@@ -253,14 +302,15 @@ function DemoSection() {
   return (
     <section className="px-4 pb-16 lg:pb-24">
       <div className="max-w-[1400px] mx-auto">
-        <motion.div variants={fadeUp} className="mb-10 text-center">
+        <ScrollReveal className="mb-10 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
             See It In Action
           </h2>
           <p className="text-sm text-slate-400 max-w-xl mx-auto">
             Watch full demos of every project in the ecosystem.
           </p>
-        </motion.div>
+        </ScrollReveal>
+        <ScrollStagger>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {demos.map((demo) => (
             <motion.div key={demo.id} variants={fadeUp}>
@@ -273,7 +323,7 @@ function DemoSection() {
                     <div>
                       <h3 className="text-sm font-semibold text-white">{demo.title}</h3>
                       <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${demo.project_type === "both" ? "bg-purple-500/10 text-purple-300" : demo.project_type === "neural-aurora" ? "bg-violet-500/10 text-violet-300" : "bg-cyan-500/10 text-cyan-300"}`}>
-                        {demo.project_type === "neural-aurora" ? "NEURAL AURORA" : demo.project_type === "wacrm" ? "WACRM" : "Ecosystem"}
+                        {demo.project_type === "neural-aurora" ? "NEURAL AURORA" : demo.project_type === "wacrm" ? "Neural Aurora CRM" : "Ecosystem"}
                       </span>
                     </div>
                   </div>
@@ -328,10 +378,11 @@ function DemoSection() {
                 )}
               </div>
             </motion.div>
-          ))}
+            ))}
+          </div>
+          </ScrollStagger>
         </div>
-      </div>
-    </section>
+      </section>
   );
 }
 
@@ -340,12 +391,8 @@ export default function HomePage() {
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      variants={stagger}
-      className="min-h-screen bg-[#020617] text-white"
-    >
+    <div className="min-h-screen bg-[#020617] text-white">
+      <ScrollProgressBar />
       <FloatingOrbs />
 
       {/* Navbar */}
@@ -484,15 +531,16 @@ export default function HomePage() {
       {/* Projects */}
       <section className="px-4 pb-16 lg:pb-24">
         <div className="max-w-[1400px] mx-auto">
-          <motion.div variants={fadeUp} className="mb-8 text-center">
+          <ScrollReveal className="mb-8 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
               One Documentation Hub For Everything
             </h2>
             <p className="text-sm text-slate-400 max-w-xl mx-auto">
               Comprehensive docs for every project in the Neural Aurora ecosystem.
             </p>
-          </motion.div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          </ScrollReveal>
+          <ScrollStagger>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {projects.map((project) => (
               <motion.div key={project.title} variants={fadeUp}>
                 <Link
@@ -530,20 +578,22 @@ export default function HomePage() {
               </motion.div>
             ))}
           </div>
+          </ScrollStagger>
         </div>
       </section>
 
       {/* Features — asymmetric bento grid (taste-skill: no 3-column generic cards) */}
       <section className="px-4 pb-16 lg:pb-24">
         <div className="max-w-[1400px] mx-auto">
-          <motion.div variants={fadeUp} className="mb-10 text-center">
+          <ScrollReveal className="mb-10 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
               Everything You Need To Ship
             </h2>
             <p className="text-sm text-slate-400 max-w-xl mx-auto">
               From first setup to production deployment, we have you covered.
             </p>
-          </motion.div>
+          </ScrollReveal>
+          <ScrollStagger>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {features.map((feature) => (
               <motion.div
@@ -567,6 +617,7 @@ export default function HomePage() {
               </motion.div>
             ))}
           </div>
+          </ScrollStagger>
         </div>
       </section>
 
@@ -576,14 +627,15 @@ export default function HomePage() {
       {/* Quick Start */}
       <section className="px-4 pb-16 lg:pb-24">
         <div className="max-w-[1400px] mx-auto">
-          <motion.div variants={fadeUp} className="mb-10 text-center">
+          <ScrollReveal className="mb-10 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
               Start Building In Minutes
             </h2>
             <p className="text-sm text-slate-400 max-w-xl mx-auto">
               Four steps from zero to running your project locally.
             </p>
-          </motion.div>
+          </ScrollReveal>
+          <ScrollStagger>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {steps.map((step) => (
               <motion.div
@@ -604,13 +656,14 @@ export default function HomePage() {
               </motion.div>
             ))}
           </div>
+          </ScrollStagger>
         </div>
       </section>
 
       {/* Stats */}
       <section className="px-4 pb-16 lg:pb-24">
         <div className="max-w-[1400px] mx-auto">
-          <motion.div variants={fadeUp}>
+          <ScrollStagger>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 { value: "50+", label: "Documentation Pages", icon: BookText },
@@ -631,16 +684,15 @@ export default function HomePage() {
                 </motion.div>
               ))}
             </div>
-          </motion.div>
+          </ScrollStagger>
         </div>
       </section>
 
       {/* Open Source */}
       <section className="px-4 pb-16 lg:pb-24">
         <div className="max-w-[1400px] mx-auto">
-          <motion.div
-            variants={fadeUp}
-            className="rounded-2xl border border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent p-8 lg:p-12 text-center"
+          <ScrollReveal>
+          <div className="rounded-2xl border border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent p-8 lg:p-12 text-center"
           >
             <GithubIcon className="w-10 h-10 text-slate-500 mx-auto mb-4" />
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
@@ -668,23 +720,25 @@ export default function HomePage() {
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-sm font-medium border border-white/10 transition-all duration-200 active:scale-[0.98]"
               >
                 <GithubIcon className="w-4 h-4" />
-                WACRM Repo
+                Neural Aurora CRM Repo
                 <ExternalLink className="w-3 h-3 text-slate-500" />
               </a>
             </div>
-          </motion.div>
+          </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* FAQ */}
       <section className="px-4 pb-16 lg:pb-24">
         <div className="max-w-[1400px] mx-auto">
-          <motion.div variants={fadeUp} className="mb-10 text-center">
+          <ScrollReveal className="mb-10 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
               Frequently Asked Questions
             </h2>
-          </motion.div>
-          <motion.div variants={fadeUp} className="max-w-2xl mx-auto space-y-2">
+          </ScrollReveal>
+          <ScrollStagger>
+          <div className="max-w-2xl mx-auto space-y-2">
             {faqs.map((faq, i) => (
               <motion.div
                 key={i}
@@ -712,16 +766,16 @@ export default function HomePage() {
                 )}
               </motion.div>
             ))}
-          </motion.div>
+          </div>
+          </ScrollStagger>
         </div>
       </section>
 
       {/* CTA */}
       <section className="px-4 pb-20 lg:pb-32">
         <div className="max-w-[1400px] mx-auto">
-          <motion.div
-            variants={fadeUp}
-            className="rounded-2xl border border-white/5 bg-gradient-to-br from-violet-500/10 via-transparent to-teal-500/10 p-8 lg:p-14 text-center relative overflow-hidden"
+          <ScrollReveal>
+          <div className="rounded-2xl border border-white/5 bg-gradient-to-br from-violet-500/10 via-transparent to-teal-500/10 p-8 lg:p-14 text-center relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.15)_0%,_transparent_70%)]" />
             <div className="relative">
@@ -749,7 +803,8 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
-          </motion.div>
+          </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -770,6 +825,6 @@ export default function HomePage() {
           </p>
         </div>
       </footer>
-    </motion.div>
+    </div>
   );
 }

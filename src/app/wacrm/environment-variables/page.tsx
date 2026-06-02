@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Environment Variables — WACRM | Neural Aurora Docs",
+  title: "Environment Variables — Neural Aurora CRM | Neural Aurora Docs",
   description:
     "Complete reference for every environment variable used by WACRM — Supabase, Meta, encryption, and AI configuration.",
 };
@@ -16,12 +16,12 @@ export default function WacrmEnvVars() {
         className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-aurora-600 dark:hover:text-aurora-400 transition-colors mb-6"
       >
         <ArrowLeft className="w-3 h-3" />
-        Back to WACRM overview
+        Back to overview
       </Link>
 
       <h1>Environment Variables</h1>
       <p>
-        WACRM uses environment variables for all configuration. Copy
+        Neural Aurora CRM uses environment variables for all configuration. Copy
         <code>.env.local.example</code> to <code>.env.local</code> and fill
         in the values.
       </p>

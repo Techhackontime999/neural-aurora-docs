@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, MessageSquare, ExternalLink } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "WACRM — Overview | Neural Aurora Docs",
+  title: "Neural Aurora CRM — Overview | Neural Aurora Docs",
   description:
     "WACRM: Self-hostable WhatsApp CRM template — shared inbox, contacts, sales pipelines, broadcasts, no-code automations, and visual flow builder.",
 };
@@ -25,7 +25,7 @@ export default function WacrmOverview() {
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-              WACRM
+              Neural Aurora CRM
             </h1>
             <p className="text-sm text-violet-600 dark:text-violet-400 font-medium">
               WhatsApp CRM Template &mdash; v1.0.0
@@ -35,7 +35,7 @@ export default function WacrmOverview() {
       </div>
 
       <blockquote>
-        Self-hostable CRM template for WhatsApp Business — shared inbox,
+        Neural Aurora CRM is a self-hostable CRM template for WhatsApp Business — shared inbox,
         contacts, sales pipelines, broadcasts, no-code automations, and a
         visual flow builder. Fork it, brand it, host it.
       </blockquote>
@@ -65,9 +65,9 @@ export default function WacrmOverview() {
 
       <hr />
 
-      <h2>What is WACRM?</h2>
+      <h2>What is Neural Aurora CRM?</h2>
       <p>
-        <strong>WACRM</strong> is a self-hostable, open-source CRM template
+        <strong>Neural Aurora CRM</strong> is a self-hostable, open-source CRM template
         purpose-built for WhatsApp Business. Created by{" "}
         <strong>Amit Kumar (Techhackontime999)</strong>, it is not a SaaS
         product — it is a template that anyone can fork, deploy, brand, and

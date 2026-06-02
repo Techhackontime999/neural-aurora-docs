@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Neural Aurora — Documentation",
   description:
-    "Official documentation for NEURAL AURORA (The Synaptic Portfolio) and WACRM (WhatsApp CRM Template). Built by Techhackontime999.",
+    "Official documentation for NEURAL AURORA (The Synaptic Portfolio) and WACRM (WhatsApp CRM) — the Neural Aurora CRM. Built by Techhackontime999.",
   keywords: [
     "NEURAL AURORA",
     "wacrm",

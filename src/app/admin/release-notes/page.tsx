@@ -101,7 +101,7 @@ export default function AdminReleaseNotesPage() {
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Project Type</label>
             <select value={projectType} onChange={(e) => setProjectType(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500">
               <option value="neural-aurora">NEURAL AURORA</option>
-              <option value="wacrm">WACRM</option>
+              <option value="wacrm">Neural Aurora CRM</option>
             </select>
           </div>
           <div>

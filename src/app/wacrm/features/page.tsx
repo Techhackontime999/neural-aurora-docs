@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Features — WACRM | Neural Aurora Docs",
+  title: "Features — Neural Aurora CRM | Neural Aurora Docs",
   description:
     "Detailed feature documentation for WACRM — shared inbox, contacts, pipelines, broadcasts, automations, and flows.",
 };
@@ -16,12 +16,12 @@ export default function WacrmFeatures() {
         className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-aurora-600 dark:hover:text-aurora-400 transition-colors mb-6"
       >
         <ArrowLeft className="w-3 h-3" />
-        Back to WACRM overview
+        Back to overview
       </Link>
 
       <h1>Features</h1>
       <p>
-        WACRM ships with a comprehensive set of CRM features purpose-built for
+        Neural Aurora CRM ships with a comprehensive set of CRM features purpose-built for
         WhatsApp Business. Below is a detailed breakdown of each module.
       </p>
 
