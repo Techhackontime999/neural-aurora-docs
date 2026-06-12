@@ -22,6 +22,40 @@ import {
 import { useState, useEffect, type ReactNode } from "react";
 import { useAuth } from "@/hooks/use-auth";
 
+const ICON_MAP: Record<string, ReactNode> = {
+  sparkles: <Sparkles className="w-5 h-5" />,
+  "book-text": <BookText className="w-5 h-5" />,
+  terminal: <Terminal className="w-5 h-5" />,
+  "code-2": <Code2 className="w-5 h-5" />,
+  palette: <Palette className="w-5 h-5" />,
+  rocket: <Rocket className="w-5 h-5" />,
+  shield: <Shield className="w-5 h-5" />,
+  "message-square": <MessageSquare className="w-5 h-5" />,
+  search: <Search className="w-5 h-5" />,
+};
+const SMALL_ICON_MAP: Record<string, ReactNode> = {
+  sparkles: <Sparkles className="w-3 h-3" />,
+  "book-text": <BookText className="w-5 h-5" />,
+  terminal: <Terminal className="w-5 h-5" />,
+  "code-2": <Code2 className="w-5 h-5" />,
+  palette: <Palette className="w-5 h-5" />,
+  rocket: <Rocket className="w-5 h-5" />,
+  shield: <Shield className="w-5 h-5" />,
+  "message-square": <MessageSquare className="w-5 h-5" />,
+  search: <Search className="w-5 h-5" />,
+};
+const FEATURE_ICON_MAP: Record<string, ReactNode> = {
+  sparkles: <Sparkles className="w-5 h-5" />,
+  "book-text": <BookText className="w-5 h-5" />,
+  terminal: <Terminal className="w-5 h-5" />,
+  "code-2": <Code2 className="w-5 h-5" />,
+  palette: <Palette className="w-5 h-5" />,
+  rocket: <Rocket className="w-5 h-5" />,
+  shield: <Shield className="w-5 h-5" />,
+  "message-square": <MessageSquare className="w-5 h-5" />,
+  search: <Search className="w-5 h-5" />,
+};
+
 function GithubIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -107,133 +141,56 @@ function ScrollProgressBar() {
   );
 }
 
-const projects = [
-  {
-    title: "NEURAL AURORA",
-    tagline: "The Synaptic Portfolio",
-    description:
-      "An immersive, open-source 3D portfolio website with AI-powered gateway, neural CMD terminal, mood-based music, and full admin dashboard.",
-    href: "/neural-aurora/overview",
-    icon: <Sparkles className="w-5 h-5" />,
-    gradient: "from-violet-500 via-purple-500 to-fuchsia-500",
-    stats: [
-      { label: "Stack", value: "React + Vite + Supabase" },
-      { label: "Version", value: "v2.3.0" },
-    ],
-  },
-  {
-    title: "Neural Aurora CRM",
-    tagline: "WhatsApp CRM Template",
-    description:
-      "Self-hostable CRM template for WhatsApp Business with shared inbox, sales pipelines, no-code automations, and visual flow builder.",
-    href: "/wacrm/overview",
-    icon: <MessageSquare className="w-5 h-5" />,
-    gradient: "from-blue-500 via-cyan-500 to-teal-500",
-    stats: [
-      { label: "Stack", value: "Next.js + Supabase" },
-      { label: "Version", value: "v1.0.0" },
-    ],
-  },
-];
+interface HomeProject {
+  id: string;
+  title: string;
+  tagline: string;
+  description: string;
+  href: string;
+  icon: string;
+  gradient: string;
+  stat_label_1: string;
+  stat_value_1: string;
+  stat_label_2: string;
+  stat_value_2: string;
+}
 
-const features = [
-  {
-    icon: <BookText className="w-5 h-5" />,
-    title: "Step-by-Step Guides",
-    description:
-      "Tutorials and onboarding flows that walk you through every feature from zero to production.",
-    span: "full",
-  },
-  {
-    icon: <Terminal className="w-5 h-5" />,
-    title: "API References",
-    description:
-      "Comprehensive API documentation with real-world examples, request/response schemas, and error handling.",
-    span: "half",
-  },
-  {
-    icon: <Search className="w-5 h-5" />,
-    title: "AI-Powered Search",
-    description:
-      "Find what you need instantly with natural language search across the entire documentation ecosystem.",
-    span: "half",
-  },
-  {
-    icon: <Code2 className="w-5 h-5" />,
-    title: "SDK & Integrations",
-    description:
-      "Developer SDKs and integration libraries for popular frameworks and platforms.",
-    span: "full",
-  },
-  {
-    icon: <Palette className="w-5 h-5" />,
-    title: "Component Library",
-    description:
-      "Reusable UI components, design tokens, and taste-skill design system documentation.",
-    span: "half",
-  },
-  {
-    icon: <Rocket className="w-5 h-5" />,
-    title: "Deployment Guides",
-    description:
-      "Production deployment guides for Vercel, Docker, and self-hosted environments.",
-    span: "half",
-  },
-];
+interface HomeFeature {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+  span: string;
+}
 
-const steps = [
-  {
-    num: "01",
-    title: "Clone the Repository",
-    desc: "Fork and clone your preferred project from GitHub.",
-    code: "git clone https://github.com/Techhackontime999/NEURAL-AURORA.git",
-  },
-  {
-    num: "02",
-    title: "Configure Environment",
-    desc: "Set up Supabase credentials and API keys.",
-    code: "cp .env.example .env",
-  },
-  {
-    num: "03",
-    title: "Read the Docs",
-    desc: "Follow the documentation to customize and configure.",
-    code: "npm run dev",
-  },
-  {
-    num: "04",
-    title: "Deploy & Scale",
-    desc: "Deploy to Vercel, Docker, or your own infrastructure.",
-    code: "vercel deploy",
-  },
-];
+interface HomeStat {
+  id: string;
+  value: string;
+  label: string;
+  icon: string;
+}
 
-const faqs = [
-  {
-    q: "How do I get started?",
-    a: "Choose a project (NEURAL AURORA or Neural Aurora CRM), clone the repository, follow the setup guide in the docs, and you'll be up and running in minutes.",
-  },
-  {
-    q: "How do I access the APIs?",
-    a: "API references are available in the documentation. Each project includes Supabase client libraries and API route examples for easy integration.",
-  },
-  {
-    q: "Are there SDKs available?",
-    a: "Yes. Both projects provide SDK examples and integration libraries. See the SDK documentation for language-specific guides.",
-  },
-  {
-    q: "Can I self-host?",
-    a: "Absolutely. Both projects are MIT-licensed and fully self-hostable. Deployment guides for Vercel, Docker, and bare-metal are included.",
-  },
-  {
-    q: "How does authentication work?",
-    a: "Authentication is handled by Supabase Auth with email/password sign-in. Neural Aurora CRM adds WhatsApp Cloud API token-based auth for business messaging.",
-  },
-  {
-    q: "Is there AI-powered search?",
-    a: "Yes! The documentation features AI-powered natural language search to help you find relevant docs, APIs, and examples instantly.",
-  },
-];
+interface HomeStep {
+  id: string;
+  step_number: number;
+  title: string;
+  description: string;
+  code: string;
+}
+
+interface HomeFaq {
+  id: string;
+  question: string;
+  answer: string;
+}
+
+interface HomepageData {
+  projects: HomeProject[];
+  features: HomeFeature[];
+  stats: HomeStat[];
+  steps: HomeStep[];
+  faqs: HomeFaq[];
+}
 
 function FloatingOrbs() {
   const { scrollY } = useScroll();
@@ -389,6 +346,18 @@ function DemoSection() {
 export default function HomePage() {
   const { user, loading } = useAuth();
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
+  const [data, setData] = useState<HomepageData | null>(null);
+  const [homeLoading, setHomeLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/homepage")
+      .then((r) => r.json())
+      .then((res) => {
+        if (!res.error) setData(res);
+      })
+      .catch(() => {})
+      .finally(() => setHomeLoading(false));
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#020617] text-white">
@@ -541,8 +510,12 @@ export default function HomePage() {
           </ScrollReveal>
           <ScrollStagger>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {projects.map((project) => (
-              <motion.div key={project.title} variants={fadeUp}>
+            {(data?.projects ?? []).map((project) => {
+              const stats = [];
+              if (project.stat_label_1 && project.stat_value_1) stats.push({ label: project.stat_label_1, value: project.stat_value_1 });
+              if (project.stat_label_2 && project.stat_value_2) stats.push({ label: project.stat_label_2, value: project.stat_value_2 });
+              return (
+              <motion.div key={project.id} variants={fadeUp}>
                 <Link
                   href={project.href}
                   className="group block relative overflow-hidden rounded-2xl border border-white/5 bg-white/[0.03] p-6 lg:p-8 transition-all duration-300 hover:bg-white/[0.06] hover:border-white/10"
@@ -551,7 +524,7 @@ export default function HomePage() {
                     <div
                       className={`w-10 h-10 rounded-xl bg-gradient-to-br ${project.gradient} flex items-center justify-center text-white`}
                     >
-                      {project.icon}
+                      {ICON_MAP[project.icon] || <Sparkles className="w-5 h-5" />}
                     </div>
                     <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-violet-400 transition-colors duration-300" />
                   </div>
@@ -565,7 +538,7 @@ export default function HomePage() {
                     {project.description}
                   </p>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-                    {project.stats.map((stat) => (
+                    {stats.map((stat) => (
                       <span key={stat.label}>
                         <span className="text-slate-400 font-medium">
                           {stat.label}
@@ -576,13 +549,14 @@ export default function HomePage() {
                   </div>
                 </Link>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
           </ScrollStagger>
         </div>
       </section>
 
-      {/* Features — asymmetric bento grid (taste-skill: no 3-column generic cards) */}
+      {/* Features — asymmetric bento grid */}
       <section className="px-4 pb-16 lg:pb-24">
         <div className="max-w-[1400px] mx-auto">
           <ScrollReveal className="mb-10 text-center">
@@ -595,9 +569,9 @@ export default function HomePage() {
           </ScrollReveal>
           <ScrollStagger>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {features.map((feature) => (
+            {(data?.features ?? []).map((feature) => (
               <motion.div
-                key={feature.title}
+                key={feature.id}
                 variants={scaleIn}
                 className={`group p-5 rounded-xl border border-white/5 bg-white/[0.03] hover:bg-white/[0.06] hover:border-violet-500/20 transition-all duration-300 ${
                   feature.span === "full" ? "md:col-span-2" : ""
@@ -605,7 +579,7 @@ export default function HomePage() {
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400 group-hover:bg-violet-500/20 transition-colors">
-                    {feature.icon}
+                    {FEATURE_ICON_MAP[feature.icon] || <BookText className="w-5 h-5" />}
                   </div>
                   <h3 className="text-sm font-semibold text-white">
                     {feature.title}
@@ -637,19 +611,19 @@ export default function HomePage() {
           </ScrollReveal>
           <ScrollStagger>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {steps.map((step) => (
+            {(data?.steps ?? []).map((step) => (
               <motion.div
-                key={step.num}
+                key={step.id}
                 variants={fadeUp}
                 className="relative p-5 rounded-xl border border-white/5 bg-white/[0.03]"
               >
                 <span className="text-3xl font-bold bg-gradient-to-b from-violet-500/30 to-transparent bg-clip-text text-transparent mb-2 block">
-                  {step.num}
+                  {String(step.step_number).padStart(2, "0")}
                 </span>
                 <h3 className="text-sm font-semibold text-white mb-1">
                   {step.title}
                 </h3>
-                <p className="text-xs text-slate-400 mb-3">{step.desc}</p>
+                <p className="text-xs text-slate-400 mb-3">{step.description}</p>
                 <pre className="text-[10px] text-slate-500 bg-white/[0.03] p-2 rounded-lg border border-white/5 overflow-x-auto font-mono">
                   {step.code}
                 </pre>
@@ -665,18 +639,19 @@ export default function HomePage() {
         <div className="max-w-[1400px] mx-auto">
           <ScrollStagger>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {[
-                { value: "50+", label: "Documentation Pages", icon: BookText },
-                { value: "100+", label: "API Endpoints", icon: Terminal },
-                { value: "20+", label: "SDK Examples", icon: Code2 },
-                { value: "99.9%", label: "Platform Uptime", icon: Shield },
-              ].map((stat) => (
+              {(data?.stats ?? []).map((stat) => (
                 <motion.div
-                  key={stat.label}
+                  key={stat.id}
                   whileHover={{ y: -2 }}
                   className="p-5 rounded-xl border border-white/5 bg-white/[0.03] text-center transition-colors duration-200 hover:border-violet-500/20"
                 >
-                  <stat.icon className="w-5 h-5 text-violet-400 mx-auto mb-2" />
+                  {SMALL_ICON_MAP[stat.icon] ? (
+                    <div className="w-5 h-5 text-violet-400 mx-auto mb-2">
+                      {SMALL_ICON_MAP[stat.icon]}
+                    </div>
+                  ) : (
+                    <BookText className="w-5 h-5 text-violet-400 mx-auto mb-2" />
+                  )}
                   <div className="text-2xl font-bold text-white mb-1">
                     {stat.value}
                   </div>
@@ -739,9 +714,9 @@ export default function HomePage() {
           </ScrollReveal>
           <ScrollStagger>
           <div className="max-w-2xl mx-auto space-y-2">
-            {faqs.map((faq, i) => (
+            {(data?.faqs ?? []).map((faq, i) => (
               <motion.div
-                key={i}
+                key={faq.id}
                 layout
                 className="rounded-xl border border-white/5 bg-white/[0.03] overflow-hidden"
               >
@@ -749,7 +724,7 @@ export default function HomePage() {
                   onClick={() => setFaqOpen(faqOpen === i ? null : i)}
                   className="flex items-center justify-between w-full px-5 py-4 text-left text-sm text-white hover:bg-white/[0.03] transition-colors"
                 >
-                  <span className="font-medium">{faq.q}</span>
+                  <span className="font-medium">{faq.question}</span>
                   <ChevronRight
                     className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${faqOpen === i ? "rotate-90" : ""}`}
                   />
@@ -761,7 +736,7 @@ export default function HomePage() {
                     transition={{ type: "spring", stiffness: 100, damping: 20 }}
                     className="px-5 pb-4 text-xs text-slate-400 leading-relaxed"
                   >
-                    {faq.a}
+                    {faq.answer}
                   </motion.div>
                 )}
               </motion.div>

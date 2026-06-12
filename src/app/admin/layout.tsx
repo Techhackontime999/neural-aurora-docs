@@ -21,6 +21,7 @@ import {
   MessageSquare,
   PlayCircle,
   Link2,
+  Home,
 } from "lucide-react";
 import { clsx } from "clsx";
 
@@ -29,6 +30,7 @@ const navItems = [
     section: "Content",
     items: [
       { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+      { label: "Homepage", href: "/admin/homepage", icon: Home },
       { label: "Doc Pages", href: "/admin/docs", icon: FileText },
       { label: "Categories", href: "/admin/categories", icon: FolderTree },
     ],
