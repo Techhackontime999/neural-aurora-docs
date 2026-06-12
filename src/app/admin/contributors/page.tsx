@@ -34,6 +34,7 @@ export default function AdminContributorsPage() {
   const fetchContributors = async () => {
     try {
       const res = await fetch("/api/contributors");
+      if (!res.ok) { setContributors([]); return; }
       const data = await res.json();
       setContributors(data.contributors ?? []);
     } catch {} finally {

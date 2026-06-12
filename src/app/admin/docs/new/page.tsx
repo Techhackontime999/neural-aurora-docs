@@ -26,15 +26,20 @@ export default function NewDocPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/categories")
-      .then((r) => r.json())
-      .then((data) => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/categories");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (cancelled) return;
         setCategories(data.categories ?? []);
         if (data.categories?.length > 0) {
           setCategoryId(data.categories[0].id);
         }
-      })
-      .catch(() => {});
+      } catch {}
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   const generateSlug = (val: string) => {

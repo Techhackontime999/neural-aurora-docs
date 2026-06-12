@@ -80,6 +80,7 @@ export default function RichTextEditor({
       ImageExtension,
     ],
     content: value || "",
+    immediatelyRender: false,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },

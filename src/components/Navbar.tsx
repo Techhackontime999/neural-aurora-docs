@@ -209,9 +209,13 @@ function SearchModal({ onClose }: { onClose: () => void }) {
   useEffect(() => { setQuery(""); setSelectedIdx(-1); }, [pathname]);
 
   useEffect(() => {
-    fetch("/api/docs")
-      .then((r) => r.json())
-      .then((data) => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/docs");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (cancelled) return;
         const pages = data.pages ?? [];
         setItems(
           pages
@@ -224,8 +228,9 @@ function SearchModal({ onClose }: { onClose: () => void }) {
               contentPlain: stripHtml(p.content || ""),
             }))
         );
-      })
-      .catch(() => {});
+      } catch {}
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   const q = query.trim().toLowerCase();

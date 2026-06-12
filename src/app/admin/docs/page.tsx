@@ -27,6 +27,7 @@ export default function AdminDocsPage() {
   const fetchPages = async () => {
     try {
       const res = await fetch("/api/docs");
+      if (!res.ok) { setError("Failed to load pages"); return; }
       const data = await res.json();
       if (data.error) {
         setError(data.error);
@@ -40,9 +41,7 @@ export default function AdminDocsPage() {
     }
   };
 
-  useEffect(() => {
-    fetchPages();
-  }, []);
+  useEffect(() => { fetchPages(); }, []);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return pages;

@@ -29,6 +29,7 @@ export default function AdminExternalLinksPage() {
   const fetchLinks = async () => {
     try {
       const res = await fetch("/api/external-links");
+      if (!res.ok) { setLinks([]); return; }
       const data = await res.json();
       setLinks(data.links ?? []);
     } catch {} finally {

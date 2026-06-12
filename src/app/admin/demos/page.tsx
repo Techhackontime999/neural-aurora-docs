@@ -40,6 +40,7 @@ export default function AdminDemosPage() {
   const fetchDemos = async () => {
     try {
       const res = await fetch("/api/demos");
+      if (!res.ok) { setDemos([]); return; }
       const data = await res.json();
       setDemos(data.demos ?? []);
     } catch {} finally {

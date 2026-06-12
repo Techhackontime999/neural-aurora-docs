@@ -32,6 +32,7 @@ export default function AdminGuidesPage() {
   const fetchGuides = async () => {
     try {
       const res = await fetch("/api/installation-guides");
+      if (!res.ok) { setGuides([]); return; }
       const data = await res.json();
       setGuides(data.guides ?? []);
     } catch {} finally {

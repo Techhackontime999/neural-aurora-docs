@@ -36,24 +36,22 @@ export default function AdminDashboard() {
   });
 
   useEffect(() => {
+    let cancelled = false;
     async function fetchStats() {
       try {
-        const [pagesRes, categoriesRes, usersRes, contributorsRes, guidesRes, releasesRes] =
-          await Promise.all([
-            fetch("/api/docs"),
-            fetch("/api/categories"),
-            fetch("/api/users"),
-            fetch("/api/contributors"),
-            fetch("/api/installation-guides"),
-            fetch("/api/release-notes"),
-          ]);
+        const results = await Promise.allSettled([
+          fetch("/api/docs").then((r) => r.ok ? r.json() : { pages: [] }),
+          fetch("/api/categories").then((r) => r.ok ? r.json() : { categories: [] }),
+          fetch("/api/users").then((r) => r.ok ? r.json() : { users: [] }),
+          fetch("/api/contributors").then((r) => r.ok ? r.json() : { contributors: [] }),
+          fetch("/api/installation-guides").then((r) => r.ok ? r.json() : { guides: [] }),
+          fetch("/api/release-notes").then((r) => r.ok ? r.json() : { releases: [] }),
+        ]);
 
-        const pages = await pagesRes.json();
-        const categories = await categoriesRes.json();
-        const users = await usersRes.json();
-        const contributors = await contributorsRes.json();
-        const guides = await guidesRes.json();
-        const releases = await releasesRes.json();
+        if (cancelled) return;
+        const [pages, categories, users, contributors, guides, releases] = results.map(
+          (r) => (r.status === "fulfilled" ? r.value : {})
+        );
 
         setStats({
           pages: pages.pages?.length ?? 0,
@@ -63,9 +61,12 @@ export default function AdminDashboard() {
           guides: guides.guides?.length ?? 0,
           releases: releases.releases?.length ?? 0,
         });
-      } catch {}
+      } catch {
+        // Stats are non-critical — silently degrade to zeros
+      }
     }
     fetchStats();
+    return () => { cancelled = true; };
   }, []);
 
   return (

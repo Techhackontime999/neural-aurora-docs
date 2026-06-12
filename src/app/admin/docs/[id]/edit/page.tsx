@@ -30,23 +30,32 @@ export default function EditDocPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/categories").then((r) => r.json()),
-      fetch("/api/docs").then((r) => r.json()),
-    ]).then(([catData, pageData]) => {
-      setCategories(catData.categories ?? []);
-      const page = (pageData.pages ?? []).find((p: any) => p.id === id);
-      if (page) {
-        setTitle(page.title);
-        setSlug(page.slug);
-        setCategoryId(page.category_id);
-        setContent(page.content || "");
-        setExcerpt(page.excerpt || "");
-        setStatus(page.status || "published");
-        setSortOrder(page.sort_order || 0);
+    let cancelled = false;
+    (async () => {
+      try {
+        const [catRes, pageRes] = await Promise.all([
+          fetch("/api/categories"),
+          fetch("/api/docs"),
+        ]);
+        const catData = catRes.ok ? await catRes.json() : { categories: [] };
+        const pageData = pageRes.ok ? await pageRes.json() : { pages: [] };
+        if (cancelled) return;
+        setCategories(catData.categories ?? []);
+        const page = (pageData.pages ?? []).find((p: any) => p.id === id);
+        if (page) {
+          setTitle(page.title);
+          setSlug(page.slug);
+          setCategoryId(page.category_id);
+          setContent(page.content || "");
+          setExcerpt(page.excerpt || "");
+          setStatus(page.status || "published");
+          setSortOrder(page.sort_order || 0);
+        }
+      } catch {} finally {
+        if (!cancelled) setLoading(false);
       }
-      setLoading(false);
-    }).catch(() => setLoading(false));
+    })();
+    return () => { cancelled = true; };
   }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {

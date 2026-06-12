@@ -32,6 +32,7 @@ export default function AdminReleaseNotesPage() {
   const fetchReleases = async () => {
     try {
       const res = await fetch("/api/release-notes");
+      if (!res.ok) { setReleases([]); return; }
       const data = await res.json();
       setReleases(data.releases ?? []);
     } catch {} finally {

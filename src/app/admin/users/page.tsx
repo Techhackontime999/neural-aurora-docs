@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Shield, Check, X, RefreshCw, UserCheck, UserX, Trash2 } from "lucide-react";
 import { useMultiSelect } from "@/hooks/useMultiSelect";
@@ -39,7 +39,7 @@ export default function AdminUsersPage() {
   const [deleting, setDeleting] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
-  const fetchUsers = useCallback(async () => {
+  const fetchUsers = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -52,9 +52,9 @@ export default function AdminUsersPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
-  useEffect(() => { fetchUsers(); }, [fetchUsers]);
+  useEffect(() => { fetchUsers(); }, []);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return users;

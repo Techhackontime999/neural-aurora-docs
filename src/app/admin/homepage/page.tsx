@@ -107,6 +107,7 @@ export default function AdminHomepagePage() {
     setLoading(true);
     try {
       const res = await fetch(`/api/homepage/${tab}`);
+      if (!res.ok) { setItems([]); return; }
       const data = await res.json();
       setItems(data.items ?? []);
     } catch {} finally {
@@ -114,9 +115,7 @@ export default function AdminHomepagePage() {
     }
   };
 
-  useEffect(() => {
-    fetchItems();
-  }, [tab]);
+  useEffect(() => { fetchItems(); }, [tab]);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return items;
