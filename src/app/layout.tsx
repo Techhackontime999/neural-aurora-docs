@@ -28,22 +28,7 @@ export const metadata: Metadata = {
     "Techhackontime999",
     "Amit Kumar",
   ],
-  icons: [
-    { rel: "icon", url: "/icon.svg", type: "image/svg+xml" },
-    { rel: "apple-touch-icon", url: "/icons/apple-touch-icon.png" },
-  ],
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    title: "Neural Aurora",
-    statusBarStyle: "black-translucent",
-  },
-  other: {
-    "mobile-web-app-capable": "yes",
-    "application-name": "Neural Aurora",
-    "theme-color": "#020617",
-    "msapplication-TileColor": "#020617",
-  },
+  icons: [{ rel: "icon", url: "/icon.svg", type: "image/svg+xml" }],
 };
 
 export default function RootLayout({
