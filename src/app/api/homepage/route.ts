@@ -1,22 +1,17 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
-const SECTIONS = ["home_projects", "home_features", "home_stats", "home_steps", "home_faqs"] as const;
-
 export async function GET() {
   const supabase = await createClient();
 
   try {
-    const [projects, features, stats, steps, faqs] = await Promise.all(
-      SECTIONS.map((table) =>
-        supabase
-          .from(table)
-          .select("*")
-          .eq("is_published", true)
-          .order("sort_order", { ascending: true })
-          .order("step_number", { ascending: true })
-      )
-    );
+    const [projects, features, stats, steps, faqs] = await Promise.all([
+      supabase.from("home_projects").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
+      supabase.from("home_features").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
+      supabase.from("home_stats").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
+      supabase.from("home_steps").select("*").eq("is_published", true).order("sort_order", { ascending: true }).order("step_number", { ascending: true }),
+      supabase.from("home_faqs").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
+    ]);
 
     for (const result of [projects, features, stats, steps, faqs]) {
       if (result.error) {
@@ -31,7 +26,7 @@ export async function GET() {
       steps: steps.data,
       faqs: faqs.data,
     });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: "Failed to load homepage content" }, { status: 500 });
   }
 }
