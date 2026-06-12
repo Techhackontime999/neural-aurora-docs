@@ -1,5 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/require-admin";
 import { NextResponse, type NextRequest } from "next/server";
 
 const VALID_SECTIONS = ["projects", "features", "stats", "steps", "faqs"] as const;
@@ -42,9 +42,8 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ section: string }> }
 ) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { error: authError } = await requireAdmin();
+  if (authError) return authError;
 
   const { section } = await params;
   if (!isValidSection(section)) {

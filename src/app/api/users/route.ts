@@ -1,24 +1,12 @@
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/require-admin";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { error: authError } = await requireAdmin();
+  if (authError) return authError;
 
   const admin = supabaseAdmin();
-
-  const { data: profile } = await admin
-    .from("profiles")
-    .select("role")
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  if (!profile || profile.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
   const { data: users, error } = await admin
     .from("profiles")
     .select("id, user_id, full_name, email, role, is_approved, avatar_url, created_at")

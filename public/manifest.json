@@ -1,0 +1,30 @@
+{
+  "name": "Neural Aurora — Documentation",
+  "short_name": "Neural Aurora",
+  "description": "Official documentation for NEURAL AURORA (The Synaptic Portfolio) and WACRM (WhatsApp CRM Template)",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["documentation", "development", "portfolio"],
+  "lang": "en"
+}

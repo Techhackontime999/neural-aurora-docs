@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/require-admin";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET() {
@@ -23,9 +24,8 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { error: authError, user } = await requireAdmin();
+  if (authError) return authError;
 
   const body = await request.json();
   const { category_id, title, slug, content, excerpt, sort_order, status } = body;
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       excerpt: excerpt || "",
       sort_order: sort_order || 0,
       status: status || "published",
-      author_id: user.id,
+      author_id: user!.id,
     })
     .select()
     .single();

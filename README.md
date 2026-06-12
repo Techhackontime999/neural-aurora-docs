@@ -7,12 +7,16 @@ Built with Next.js 16, Supabase, and the taste-skill design system.
 ## Features
 
 - **Dynamic Documentation** — All docs pages stored in Supabase, editable via admin panel
-- **Project Showcase** — Landing page with hero, features, demos, quick start guides, FAQ
+- **Project Showcase** — Landing page with hero, features, demos, stats, steps, FAQ
 - **Demo Section** — Watch full demos of each project (manageable from admin)
-- **Admin Panel** — Full CRUD for docs, categories, contributors, installation guides, release notes, and demos
+- **Admin Panel** — Full CRUD for docs, categories, contributors, installation guides, release notes, demos, external links, and homepage sections (projects, features, stats, steps, FAQ)
+- **Rich Text Editing** — Tiptap-based WYSIWYG editor for all content fields
+- **Search & Multi-Select** — Every admin list page has real-time search, checkbox multi-select, and bulk delete
+- **Framer Motion Animations** — Staggered spring animations throughout admin UI
 - **Auth System** — Supabase SSR auth with cookie-based sessions, admin approval workflow
 - **AI-Powered Search** — Client-side search across all documentation pages
 - **taste-skill Design** — Premium dark theme with taste-skill design system (DESIGN_VARIANCE: 8, MOTION_INTENSITY: 6, VISUAL_DENSITY: 4)
+- **Security Hardened** — All write API routes require admin role (role-level auth), whitelisted column updates prevent injection
 
 ## Tech Stack
 
@@ -111,14 +115,19 @@ neural-aurora-docs/
 │   │   ├── page.tsx         # Landing page
 │   │   └── layout.tsx       # Root layout
 │   ├── components/          # React components
+│   │   ├── AdminSearch.tsx  # Reusable search bar for admin pages
+│   │   ├── RichTextEditor.tsx # Tiptap WYSIWYG editor
 │   │   ├── Navbar.tsx
 │   │   ├── Sidebar.tsx
 │   │   ├── DocsShell.tsx
 │   │   └── BrandLogo.tsx
 │   ├── hooks/               # React hooks
 │   │   ├── use-auth.tsx     # Auth provider
-│   │   └── use-theme.tsx    # Theme provider
+│   │   ├── use-theme.tsx    # Theme provider
+│   │   └── useMultiSelect.ts # Selection state (toggle, toggleAll, clear)
 │   └── lib/
+│       ├── require-admin.ts # Admin role check helper for API routes
+│       ├── animations.ts    # Framer Motion stagger/spring variants
 │       └── supabase/        # Supabase client utilities
 ├── supabase/
 │   └── migrations/          # Database migrations
@@ -142,6 +151,8 @@ Access `/admin` after signing in. The first user is automatically promoted to ad
 | Installation Guides| Setup guides per project                 |
 | Release Notes      | Version release notes                    |
 | Demos              | Homepage demo showcase entries           |
+| External Links     | Dynamic sidebar external links           |
+| Homepage           | Manage projects, features, stats, steps, and FAQ sections |
 
 ## Homepage Demo Section
 
@@ -153,6 +164,14 @@ The landing page includes a "See It In Action" section that pulls published demo
 - **Embed URL** — Iframe src for embedded video (takes priority over Video URL)
 - **Project Type** — Filters to NEURAL AURORA, WACRM, or Both
 - **Published toggle** — Show/hide on the homepage
+
+## Security
+
+### Admin Role Enforcement
+All write API routes (POST, PUT, DELETE) require the authenticated user's `profiles.role` to be `"admin"`. This is enforced via the reusable `requireAdmin()` helper at `src/lib/require-admin.ts`, which fetches the user profile and returns a 401/403 response if unauthorized.
+
+### Column Injection Protection
+All PUT handlers destructure only the expected fields from the request body instead of passing `body` directly to `.update(body)`. This prevents malicious payloads from overwriting columns like `id`, `user_id`, or other internal fields.
 
 ## License
 

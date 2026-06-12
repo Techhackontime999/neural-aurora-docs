@@ -1,22 +1,22 @@
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/require-admin";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { error: authError } = await requireAdmin();
+  if (authError) return authError;
 
   const { id } = await params;
   const body = await request.json();
+  const { title, description, video_url, embed_url, thumbnail_url, project_type, sort_order, is_published } = body;
 
   const admin = supabaseAdmin();
   const { data, error } = await admin
     .from("demos")
-    .update(body)
+    .update({ title, description, video_url, embed_url, thumbnail_url, project_type, sort_order, is_published })
     .eq("id", id)
     .select()
     .single();
@@ -29,9 +29,8 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { error: authError } = await requireAdmin();
+  if (authError) return authError;
 
   const { id } = await params;
 
