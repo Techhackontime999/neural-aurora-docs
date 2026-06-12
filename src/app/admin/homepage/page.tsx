@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { motion } from "framer-motion";
 import {
   Plus, Edit, Trash2, Eye, EyeOff,
   Sparkles, BookText, Terminal, Code2, Palette, Rocket, Shield, MessageSquare,
 } from "lucide-react";
+import AdminSearch from "@/components/AdminSearch";
+import { containerVariants, itemVariants } from "@/lib/animations";
 
 const TABS = [
   { key: "projects", label: "Projects" },
@@ -83,10 +86,19 @@ const GRADIENT_OPTIONS = [
   { value: "from-rose-500 via-pink-500 to-purple-500", label: "Rose to Purple" },
 ];
 
+const TabSearchFields: Record<TabKey, (keyof AnyItem)[]> = {
+  projects: ["title", "tagline", "description"],
+  features: ["title", "description"],
+  stats: ["value", "label"],
+  steps: ["title", "description", "code"],
+  faqs: ["question", "answer"],
+};
+
 export default function AdminHomepagePage() {
   const [tab, setTab] = useState<TabKey>("projects");
   const [items, setItems] = useState<AnyItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Record<string, string | number | boolean>>({});
@@ -105,6 +117,18 @@ export default function AdminHomepagePage() {
   useEffect(() => {
     fetchItems();
   }, [tab]);
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return items;
+    const q = search.toLowerCase();
+    const fields = TabSearchFields[tab];
+    return items.filter((item) =>
+      fields.some((field) => {
+        const val = item[field];
+        return typeof val === "string" && val.toLowerCase().includes(q);
+      })
+    );
+  }, [items, search, tab]);
 
   const resetForm = () => {
     setFormData({});
@@ -164,6 +188,15 @@ export default function AdminHomepagePage() {
       body: JSON.stringify({ is_published: !item.is_published }),
     });
     fetchItems();
+  };
+
+  const getSearchPlaceholder = () => {
+    switch (tab) {
+      case "faqs": return "Search FAQs...";
+      case "steps": return "Search steps...";
+      case "stats": return "Search stats...";
+      default: return `Search ${tab}...`;
+    }
   };
 
   const renderFormFields = () => {
@@ -346,7 +379,7 @@ export default function AdminHomepagePage() {
         {TABS.map((t) => (
           <button
             key={t.key}
-            onClick={() => { setTab(t.key); setShowForm(false); }}
+            onClick={() => { setTab(t.key); setShowForm(false); setSearch(""); }}
             className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
               tab === t.key
                 ? "border-aurora-500 text-aurora-600 dark:text-aurora-400"
@@ -371,15 +404,32 @@ export default function AdminHomepagePage() {
         </form>
       )}
 
+      {/* Search */}
+      <div className="mb-4">
+        <AdminSearch value={search} onChange={setSearch} placeholder={getSearchPlaceholder()} />
+      </div>
+
       {/* List */}
       {loading ? (
         <div className="text-center py-12 text-sm text-slate-400">Loading...</div>
-      ) : items.length === 0 ? (
-        <div className="text-center py-12 text-sm text-slate-400">No items yet. Add one above.</div>
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-12 text-sm text-slate-400">
+          {search ? `No ${tab} match your search.` : "No items yet. Add one above."}
+        </div>
       ) : (
-        <div className="space-y-3">
-          {items.map((item) => (
-            <div key={item.id} className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-3"
+        >
+          {filtered.map((item) => (
+            <motion.div
+              key={item.id}
+              variants={itemVariants}
+              layout
+              className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between"
+            >
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
                   {tab === "faqs" ? (item as Faq).question : (item as Project | Feature | Step).title}
@@ -409,9 +459,9 @@ export default function AdminHomepagePage() {
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );

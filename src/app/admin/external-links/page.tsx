@@ -1,7 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { motion } from "framer-motion";
 import { Plus, Edit, Trash2, ExternalLink } from "lucide-react";
+import { useMultiSelect } from "@/hooks/useMultiSelect";
+import AdminSearch from "@/components/AdminSearch";
+import { containerVariants, itemVariants } from "@/lib/animations";
 
 interface LinkItem {
   id: string;
@@ -14,6 +18,8 @@ interface LinkItem {
 export default function AdminExternalLinksPage() {
   const [links, setLinks] = useState<LinkItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [deleting, setDeleting] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
@@ -31,6 +37,16 @@ export default function AdminExternalLinksPage() {
   };
 
   useEffect(() => { fetchLinks(); }, []);
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return links;
+    const q = search.toLowerCase();
+    return links.filter(
+      (l) => l.title.toLowerCase().includes(q) || l.url.toLowerCase().includes(q)
+    );
+  }, [links, search]);
+
+  const { selected, allVisibleSelected, toggleOne, toggleAll, clearSelection } = useMultiSelect(filtered);
 
   const resetForm = () => {
     setEditId(null);
@@ -62,9 +78,21 @@ export default function AdminExternalLinksPage() {
     fetchLinks();
   };
 
-  const handleDelete = async (id: string) => {
+  const handleSingleDelete = async (id: string) => {
     if (!confirm("Delete this link?")) return;
     await fetch(`/api/external-links/${id}`, { method: "DELETE" });
+    fetchLinks();
+  };
+
+  const handleBulkDelete = async () => {
+    if (selected.size === 0) return;
+    if (!confirm(`Delete ${selected.size} link${selected.size > 1 ? "s" : ""}?`)) return;
+    setDeleting(true);
+    await Promise.allSettled(
+      [...selected].map((id) => fetch(`/api/external-links/${id}`, { method: "DELETE" }))
+    );
+    clearSelection();
+    setDeleting(false);
     fetchLinks();
   };
 
@@ -111,39 +139,89 @@ export default function AdminExternalLinksPage() {
             <button type="submit" className="px-4 py-2 rounded-lg bg-aurora-500 hover:bg-aurora-400 text-white text-sm font-medium transition-all active:scale-[0.98]">
               {editId ? "Update Link" : "Create Link"}
             </button>
-            <button type="button" onClick={resetForm} className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+            <button type="button" onClick={resetForm} className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]">
               Cancel
             </button>
           </div>
         </form>
       )}
 
+      <div className="mb-4">
+        <AdminSearch value={search} onChange={setSearch} placeholder="Search links..." />
+      </div>
+
+      {selected.size > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3 mb-4 px-4 py-2.5 rounded-lg bg-aurora-50 dark:bg-aurora-950/20 border border-aurora-200 dark:border-aurora-900"
+        >
+          <span className="text-sm text-aurora-700 dark:text-aurora-300 font-medium">
+            {selected.size} selected
+          </span>
+          <button
+            onClick={handleBulkDelete}
+            disabled={deleting}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-red-500 hover:bg-red-400 disabled:opacity-50 text-white text-xs font-medium transition-all active:scale-[0.98]"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            {deleting ? "Deleting..." : "Delete Selected"}
+          </button>
+          <button
+            onClick={clearSelection}
+            className="px-3 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]"
+          >
+            Clear Selection
+          </button>
+        </motion.div>
+      )}
+
       {loading ? (
         <div className="text-center py-12 text-sm text-slate-400">Loading...</div>
-      ) : links.length === 0 ? (
-        <div className="text-center py-12 text-sm text-slate-400">No external links yet.</div>
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-12 text-sm text-slate-400">
+          {search ? "No links match your search." : "No external links yet."}
+        </div>
       ) : (
-        <div className="space-y-3">
-          {links.map((item) => (
-            <div key={item.id} className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between">
-              <div className="flex items-center gap-3">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-3"
+        >
+          {filtered.map((item) => (
+            <motion.div
+              key={item.id}
+              variants={itemVariants}
+              layout
+              className={`p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between ${
+                selected.has(item.id) ? "ring-2 ring-aurora-500/30" : ""
+              }`}
+            >
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <input
+                  type="checkbox"
+                  checked={selected.has(item.id)}
+                  onChange={() => toggleOne(item.id)}
+                  className="rounded border-slate-300 dark:border-slate-600 text-aurora-500 focus:ring-aurora-500 shrink-0"
+                />
                 <ExternalLink className="w-4 h-4 text-aurora-500 shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-slate-900 dark:text-white">{item.title}</p>
-                  <p className="text-xs text-slate-500 font-mono mt-0.5">{item.url}</p>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{item.title}</p>
+                  <p className="text-xs text-slate-500 font-mono mt-0.5 truncate">{item.url}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 shrink-0">
                 <button onClick={() => handleEdit(item)} className="p-1.5 rounded-lg text-slate-400 hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                   <Edit className="w-4 h-4" />
                 </button>
-                <button onClick={() => handleDelete(item.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
+                <button onClick={() => handleSingleDelete(item.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );

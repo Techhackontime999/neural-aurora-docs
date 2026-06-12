@@ -1,7 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Plus, Edit, Trash2, Check, X } from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
+import { motion } from "framer-motion";
+import { Plus, Edit, Trash2 } from "lucide-react";
+import { useMultiSelect } from "@/hooks/useMultiSelect";
+import AdminSearch from "@/components/AdminSearch";
+import { containerVariants, itemVariants } from "@/lib/animations";
 
 interface Contributor {
   id: string;
@@ -16,6 +20,8 @@ interface Contributor {
 export default function AdminContributorsPage() {
   const [contributors, setContributors] = useState<Contributor[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [deleting, setDeleting] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -36,6 +42,19 @@ export default function AdminContributorsPage() {
   };
 
   useEffect(() => { fetchContributors(); }, []);
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return contributors;
+    const q = search.toLowerCase();
+    return contributors.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        c.role?.toLowerCase().includes(q) ||
+        c.bio?.toLowerCase().includes(q)
+    );
+  }, [contributors, search]);
+
+  const { selected, allVisibleSelected, toggleOne, toggleAll, clearSelection } = useMultiSelect(filtered);
 
   const resetForm = () => {
     setName("");
@@ -81,9 +100,21 @@ export default function AdminContributorsPage() {
     fetchContributors();
   };
 
-  const handleDelete = async (id: string) => {
+  const handleSingleDelete = async (id: string) => {
     if (!confirm("Delete this contributor?")) return;
     await fetch(`/api/contributors/${id}`, { method: "DELETE" });
+    fetchContributors();
+  };
+
+  const handleBulkDelete = async () => {
+    if (selected.size === 0) return;
+    if (!confirm(`Delete ${selected.size} contributor${selected.size > 1 ? "s" : ""}?`)) return;
+    setDeleting(true);
+    await Promise.allSettled(
+      [...selected].map((id) => fetch(`/api/contributors/${id}`, { method: "DELETE" }))
+    );
+    clearSelection();
+    setDeleting(false);
     fetchContributors();
   };
 
@@ -136,19 +167,69 @@ export default function AdminContributorsPage() {
         </form>
       )}
 
+      <div className="mb-4">
+        <AdminSearch value={search} onChange={setSearch} placeholder="Search contributors..." />
+      </div>
+
+      {selected.size > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3 mb-4 px-4 py-2.5 rounded-lg bg-aurora-50 dark:bg-aurora-950/20 border border-aurora-200 dark:border-aurora-900"
+        >
+          <span className="text-sm text-aurora-700 dark:text-aurora-300 font-medium">
+            {selected.size} selected
+          </span>
+          <button
+            onClick={handleBulkDelete}
+            disabled={deleting}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-red-500 hover:bg-red-400 disabled:opacity-50 text-white text-xs font-medium transition-all active:scale-[0.98]"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            {deleting ? "Deleting..." : "Delete Selected"}
+          </button>
+          <button
+            onClick={clearSelection}
+            className="px-3 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]"
+          >
+            Clear Selection
+          </button>
+        </motion.div>
+      )}
+
       {loading ? (
         <div className="text-center py-12 text-sm text-slate-400">Loading...</div>
-      ) : contributors.length === 0 ? (
-        <div className="text-center py-12 text-sm text-slate-400">No contributors yet.</div>
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-12 text-sm text-slate-400">
+          {search ? "No contributors match your search." : "No contributors yet."}
+        </div>
       ) : (
-        <div className="space-y-3">
-          {contributors.map((c) => (
-            <div key={c.id} className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-3"
+        >
+          {filtered.map((c) => (
+            <motion.div
+              key={c.id}
+              variants={itemVariants}
+              layout
+              className={`p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between ${
+                selected.has(c.id) ? "ring-2 ring-aurora-500/30" : ""
+              }`}
+            >
               <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={selected.has(c.id)}
+                  onChange={() => toggleOne(c.id)}
+                  className="rounded border-slate-300 dark:border-slate-600 text-aurora-500 focus:ring-aurora-500 shrink-0"
+                />
                 {c.avatar_url ? (
-                  <img src={c.avatar_url} alt={c.name} className="w-10 h-10 rounded-full object-cover" />
+                  <img src={c.avatar_url} alt={c.name} className="w-10 h-10 rounded-full object-cover shrink-0" />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-aurora-100 dark:bg-aurora-950/30 flex items-center justify-center text-aurora-600 dark:text-aurora-400 font-bold text-sm">
+                  <div className="w-10 h-10 rounded-full bg-aurora-100 dark:bg-aurora-950/30 flex items-center justify-center text-aurora-600 dark:text-aurora-400 font-bold text-sm shrink-0">
                     {c.name.charAt(0)}
                   </div>
                 )}
@@ -162,13 +243,13 @@ export default function AdminContributorsPage() {
                 <button onClick={() => handleEdit(c)} className="p-1.5 rounded-lg text-slate-400 hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                   <Edit className="w-4 h-4" />
                 </button>
-                <button onClick={() => handleDelete(c.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
+                <button onClick={() => handleSingleDelete(c.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );

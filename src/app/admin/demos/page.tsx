@@ -1,7 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { motion } from "framer-motion";
 import { Plus, Edit, Trash2, Eye, EyeOff } from "lucide-react";
+import { useMultiSelect } from "@/hooks/useMultiSelect";
+import AdminSearch from "@/components/AdminSearch";
+import { containerVariants, itemVariants } from "@/lib/animations";
 
 interface Demo {
   id: string;
@@ -20,6 +24,8 @@ type ProjectType = "neural-aurora" | "wacrm" | "both";
 export default function AdminDemosPage() {
   const [demos, setDemos] = useState<Demo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [deleting, setDeleting] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
@@ -42,6 +48,19 @@ export default function AdminDemosPage() {
   };
 
   useEffect(() => { fetchDemos(); }, []);
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return demos;
+    const q = search.toLowerCase();
+    return demos.filter(
+      (d) =>
+        d.title.toLowerCase().includes(q) ||
+        d.description?.toLowerCase().includes(q) ||
+        d.project_type.toLowerCase().includes(q)
+    );
+  }, [demos, search]);
+
+  const { selected, allVisibleSelected, toggleOne, toggleAll, clearSelection } = useMultiSelect(filtered);
 
   const resetForm = () => {
     setTitle("");
@@ -91,9 +110,21 @@ export default function AdminDemosPage() {
     fetchDemos();
   };
 
-  const handleDelete = async (id: string) => {
+  const handleSingleDelete = async (id: string) => {
     if (!confirm("Delete this demo?")) return;
     await fetch(`/api/demos/${id}`, { method: "DELETE" });
+    fetchDemos();
+  };
+
+  const handleBulkDelete = async () => {
+    if (selected.size === 0) return;
+    if (!confirm(`Delete ${selected.size} demo${selected.size > 1 ? "s" : ""}?`)) return;
+    setDeleting(true);
+    await Promise.allSettled(
+      [...selected].map((id) => fetch(`/api/demos/${id}`, { method: "DELETE" }))
+    );
+    clearSelection();
+    setDeleting(false);
     fetchDemos();
   };
 
@@ -169,24 +200,76 @@ export default function AdminDemosPage() {
         </form>
       )}
 
+      <div className="mb-4">
+        <AdminSearch value={search} onChange={setSearch} placeholder="Search demos..." />
+      </div>
+
+      {selected.size > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3 mb-4 px-4 py-2.5 rounded-lg bg-aurora-50 dark:bg-aurora-950/20 border border-aurora-200 dark:border-aurora-900"
+        >
+          <span className="text-sm text-aurora-700 dark:text-aurora-300 font-medium">
+            {selected.size} selected
+          </span>
+          <button
+            onClick={handleBulkDelete}
+            disabled={deleting}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-red-500 hover:bg-red-400 disabled:opacity-50 text-white text-xs font-medium transition-all active:scale-[0.98]"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            {deleting ? "Deleting..." : "Delete Selected"}
+          </button>
+          <button
+            onClick={clearSelection}
+            className="px-3 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]"
+          >
+            Clear Selection
+          </button>
+        </motion.div>
+      )}
+
       {loading ? (
         <div className="text-center py-12 text-sm text-slate-400">Loading...</div>
-      ) : demos.length === 0 ? (
-        <div className="text-center py-12 text-sm text-slate-400">No demos yet. Add one to show on the homepage.</div>
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-12 text-sm text-slate-400">
+          {search ? "No demos match your search." : "No demos yet. Add one to show on the homepage."}
+        </div>
       ) : (
-        <div className="space-y-3">
-          {demos.map((d) => (
-            <div key={d.id} className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{d.title}</p>
-                  <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${d.project_type === "both" ? "bg-purple-100 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400" : d.project_type === "neural-aurora" ? "bg-violet-100 dark:bg-violet-950/30 text-violet-600 dark:text-violet-400" : "bg-cyan-100 dark:bg-cyan-950/30 text-cyan-600 dark:text-cyan-400"}`}>
-                    {d.project_type}
-                  </span>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-3"
+        >
+          {filtered.map((d) => (
+            <motion.div
+              key={d.id}
+              variants={itemVariants}
+              layout
+              className={`p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between ${
+                selected.has(d.id) ? "ring-2 ring-aurora-500/30" : ""
+              }`}
+            >
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <input
+                  type="checkbox"
+                  checked={selected.has(d.id)}
+                  onChange={() => toggleOne(d.id)}
+                  className="rounded border-slate-300 dark:border-slate-600 text-aurora-500 focus:ring-aurora-500 shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{d.title}</p>
+                    <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 ${d.project_type === "both" ? "bg-purple-100 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400" : d.project_type === "neural-aurora" ? "bg-violet-100 dark:bg-violet-950/30 text-violet-600 dark:text-violet-400" : "bg-cyan-100 dark:bg-cyan-950/30 text-cyan-600 dark:text-cyan-400"}`}>
+                      {d.project_type}
+                    </span>
+                  </div>
+                  {d.description && (
+                    <p className="text-xs text-slate-400 mt-0.5 truncate">{d.description}</p>
+                  )}
                 </div>
-                {d.description && (
-                  <p className="text-xs text-slate-400 mt-0.5 truncate">{d.description}</p>
-                )}
               </div>
               <div className="flex items-center gap-1 ml-3 shrink-0">
                 <button
@@ -199,13 +282,13 @@ export default function AdminDemosPage() {
                 <button onClick={() => handleEdit(d)} className="p-1.5 rounded-lg text-slate-400 hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                   <Edit className="w-4 h-4" />
                 </button>
-                <button onClick={() => handleDelete(d.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
+                <button onClick={() => handleSingleDelete(d.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );
