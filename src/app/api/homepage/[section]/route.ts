@@ -28,11 +28,11 @@ export async function GET(
 
   const admin = supabaseAdmin();
   const table = TABLE_MAP[section];
-  const { data, error } = await admin
-    .from(table)
-    .select("*")
-    .order("sort_order", { ascending: true })
-    .order("step_number", { ascending: true });
+  let query = admin.from(table).select("*").order("sort_order", { ascending: true });
+  if (section === "steps") {
+    query = query.order("step_number", { ascending: true });
+  }
+  const { data, error } = await query;
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ items: data });

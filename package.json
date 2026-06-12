@@ -4,7 +4,7 @@
   "private": true,
   "description": "Official documentation for NEURAL AURORA and WACRM — built by Techhackontime999",
   "scripts": {
-    "dev": "next dev --webpack",
+    "dev": "npx kill-port 3000 && next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint"
@@ -24,6 +24,7 @@
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "kill-port": "^2.0.1",
     "postcss": "^8.5.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.8.0"
