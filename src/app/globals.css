@@ -40,14 +40,6 @@
 
   body {
     font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
-    background-color: var(--color-slate-50);
-    color: var(--color-slate-900);
-  }
-
-  .dark body,
-  body.dark {
-    background-color: var(--color-slate-950);
-    color: var(--color-slate-100);
   }
 
   code,
