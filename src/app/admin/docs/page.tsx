@@ -16,13 +16,21 @@ interface DocPage {
 export default function AdminDocsPage() {
   const [pages, setPages] = useState<DocPage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchPages = async () => {
     try {
       const res = await fetch("/api/docs");
       const data = await res.json();
-      setPages(data.pages ?? []);
-    } catch {} finally {
+      if (data.error) {
+        setError(data.error);
+      } else {
+        setPages(data.pages ?? []);
+      }
+    } catch (e) {
+      setError("Failed to load pages. Check the console for details.");
+      console.error("Error fetching doc pages:", e);
+    } finally {
       setLoading(false);
     }
   };
@@ -54,6 +62,10 @@ export default function AdminDocsPage() {
 
       {loading ? (
         <div className="text-center py-12 text-sm text-slate-400">Loading...</div>
+      ) : error ? (
+        <div className="text-center py-12 text-sm text-red-500">
+          {error}
+        </div>
       ) : pages.length === 0 ? (
         <div className="text-center py-12 text-sm text-slate-400">
           No pages yet. Create your first doc page.

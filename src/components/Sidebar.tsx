@@ -32,6 +32,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const [externalLinks, setExternalLinks] = useState<ExternalLinkItem[]>([]);
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -51,6 +52,11 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         ]);
 
         if (cancelled) return;
+
+        if (docData.error) {
+          setError(docData.error);
+          return;
+        }
 
         const categories = catData.categories ?? [];
         const pages = docData.pages ?? [];
@@ -79,7 +85,9 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         setExternalLinks(linkData.links ?? []);
         setExpandedSections(result.map((s) => s.name));
         setLoading(false);
-      } catch {
+      } catch (e) {
+        if (!cancelled) setError("Failed to load navigation.");
+        console.error("Error loading sidebar data:", e);
         if (!cancelled) setLoading(false);
       }
     };
@@ -122,6 +130,8 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
 
       {loading ? (
         <div className="px-4 py-8 text-center text-xs text-slate-400">Loading...</div>
+      ) : error ? (
+        <div className="px-4 py-8 text-center text-xs text-red-500">{error}</div>
       ) : sections.length === 0 ? (
         <div className="px-4 py-8 text-center text-xs text-slate-400">
           No categories yet. Add some from the admin panel.

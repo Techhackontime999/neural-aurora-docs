@@ -65,14 +65,18 @@ export default async function DynamicDocPage({ params }: Props) {
   if (slugs.length === 1) {
     const [categorySlug] = slugs;
 
-    const { data: category } = await admin
+    const { data: category, error: catErr } = await admin
       .from("doc_categories")
       .select("id, name")
       .eq("slug", categorySlug)
       .maybeSingle();
 
+    if (catErr) {
+      throw new Error(`Failed to load category: ${catErr.message}`);
+    }
+
     if (category) {
-      const { data: page } = await admin
+      const { data: page, error: pageErr } = await admin
         .from("doc_pages")
         .select("title, excerpt, content")
         .eq("category_id", category.id)
@@ -80,6 +84,10 @@ export default async function DynamicDocPage({ params }: Props) {
         .order("sort_order", { ascending: true })
         .limit(1)
         .maybeSingle();
+
+      if (pageErr) {
+        throw new Error(`Failed to load page: ${pageErr.message}`);
+      }
 
       if (page) {
         return (
@@ -99,20 +107,28 @@ export default async function DynamicDocPage({ params }: Props) {
   if (slugs.length === 2) {
     const [categorySlug, pageSlug] = slugs;
 
-    const { data: category } = await admin
+    const { data: category, error: catErr } = await admin
       .from("doc_categories")
       .select("id, name")
       .eq("slug", categorySlug)
       .maybeSingle();
 
+    if (catErr) {
+      throw new Error(`Failed to load category: ${catErr.message}`);
+    }
+
     if (category) {
-      const { data: page } = await admin
+      const { data: page, error: pageErr } = await admin
         .from("doc_pages")
         .select("*")
         .eq("category_id", category.id)
         .eq("slug", pageSlug)
         .eq("status", "published")
         .maybeSingle();
+
+      if (pageErr) {
+        throw new Error(`Failed to load page: ${pageErr.message}`);
+      }
 
       if (page) {
         return (
@@ -129,12 +145,16 @@ export default async function DynamicDocPage({ params }: Props) {
   // Standalone page by full slug path
   const fullSlug = slugs.join("/");
 
-  const { data: page } = await admin
+  const { data: page, error: pageErr } = await admin
     .from("doc_pages")
     .select("*, category:doc_categories(name, slug)")
     .eq("slug", fullSlug)
     .eq("status", "published")
     .maybeSingle();
+
+  if (pageErr) {
+    throw new Error(`Failed to load page: ${pageErr.message}`);
+  }
 
   if (!page) {
     notFound();

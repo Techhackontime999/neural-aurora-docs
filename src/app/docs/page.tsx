@@ -35,6 +35,7 @@ const fadeUp = {
 export default function DocsPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -52,6 +53,11 @@ export default function DocsPage() {
         ]);
 
         if (cancelled) return;
+
+        if (docData.error) {
+          setError(docData.error);
+          return;
+        }
 
         const cats = catData.categories ?? [];
         const pages = docData.pages ?? [];
@@ -77,8 +83,9 @@ export default function DocsPage() {
             pages: pageMap[c.slug] || [],
           }))
         );
-      } catch {
-        // ignore
+      } catch (e) {
+        if (!cancelled) setError("Failed to load documentation. Check the console for details.");
+        console.error("Error loading docs:", e);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -113,7 +120,9 @@ export default function DocsPage() {
         </p>
       </motion.div>
 
-      {categories.length === 0 ? (
+      {error ? (
+        <p className="text-sm text-red-500 py-8 text-center">{error}</p>
+      ) : categories.length === 0 ? (
         <p className="text-sm text-slate-400 py-8 text-center">
           No documentation pages yet.
         </p>
