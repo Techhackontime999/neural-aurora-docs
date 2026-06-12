@@ -25,26 +25,28 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+  } catch {
+    // No session or malformed cookie — treat as unauthenticated
+  }
 
-  // Auth pages - redirect to home if already logged in
+  const { pathname } = request.nextUrl;
+
+  // Redirect authenticated users away from auth pages
   if (
     user &&
-    (request.nextUrl.pathname === "/login" ||
-      request.nextUrl.pathname === "/signup" ||
-      request.nextUrl.pathname === "/forgot-password")
+    (pathname === "/login" || pathname === "/signup")
   ) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin";
     return NextResponse.redirect(url);
   }
 
-  // Protected admin pages - redirect to login if not authenticated
-  const protectedPaths = ["/admin"];
-  if (
-    !user &&
-    protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path))
-  ) {
+  // Protect admin pages — redirect to login if not authenticated
+  if (!user && pathname.startsWith("/admin")) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
@@ -53,20 +55,24 @@ export async function proxy(request: NextRequest) {
   // If authenticated but not approved, redirect to approval-pending
   if (
     user &&
-    request.nextUrl.pathname !== "/approval-pending" &&
-    !request.nextUrl.pathname.startsWith("/api/") &&
-    !request.nextUrl.pathname.startsWith("/_next/")
+    pathname !== "/approval-pending" &&
+    !pathname.startsWith("/api/") &&
+    !pathname.startsWith("/_next/")
   ) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("is_approved")
-      .eq("user_id", user.id)
-      .maybeSingle();
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_approved")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-    if (profile && profile.is_approved !== true) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/approval-pending";
-      return NextResponse.redirect(url);
+      if (profile && profile.is_approved !== true) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/approval-pending";
+        return NextResponse.redirect(url);
+      }
+    } catch {
+      // Silently skip approval check on error
     }
   }
 
@@ -75,6 +81,9 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/admin/:path*",
+    "/login",
+    "/signup",
+    "/approval-pending",
   ],
 };

@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   useCallback,
+  useRef,
   type ReactNode,
 } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -36,6 +37,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [profileLoading, setProfileLoading] = useState(true);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
+  }, []);
 
   const fetchProfile = useCallback(async (userId: string) => {
     const supabase = createClient();
@@ -47,13 +54,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq("user_id", userId)
         .maybeSingle();
 
+      if (!mountedRef.current) return;
       if (data) {
         setProfile(data);
       }
     } catch {
       console.error("[AuthProvider] fetchProfile error");
     } finally {
-      setProfileLoading(false);
+      if (mountedRef.current) setProfileLoading(false);
     }
   }, []);
 
