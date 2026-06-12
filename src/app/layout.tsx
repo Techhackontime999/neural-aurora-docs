@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { DocsShell } from "@/components/DocsShell";
@@ -56,22 +57,19 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var t = localStorage.getItem("theme");
-                  var d = t === "dark" || (!t && matchMedia("(prefers-color-scheme:dark)").matches);
-                  if (d) document.documentElement.classList.add("dark");
-                } catch(e) {}
-              })();
-            `,
-          }}
-        />
-      </head>
+      <head />
       <body className="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased">
+        <Script id="theme-script" strategy="beforeInteractive">
+          {`
+            (function() {
+              try {
+                var t = localStorage.getItem("theme");
+                var d = t === "dark" || (!t && matchMedia("(prefers-color-scheme:dark)").matches);
+                if (d) document.documentElement.classList.add("dark");
+              } catch(e) {}
+            })();
+          `}
+        </Script>
         <ThemeProvider>
           <DocsShell>{children}</DocsShell>
         </ThemeProvider>

@@ -65,12 +65,12 @@ interface Demo {
 }
 
 export default async function HomePage() {
-  const supabase = await createClient();
-
   let initialData: HomepageData = { projects: [], features: [], stats: [], steps: [], faqs: [] };
   let initialDemos: Demo[] = [];
 
   try {
+    const supabase = await createClient();
+
     const [projects, features, stats, steps, faqs, demosResult] = await Promise.all([
       supabase.from("home_projects").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
       supabase.from("home_features").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
