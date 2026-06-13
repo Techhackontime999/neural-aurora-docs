@@ -2,18 +2,23 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 
-const QUICK_ACTIONS = [
-  { label: "Dashboard", prompt: "Show dashboard stats", category: "Overview" },
-  { label: "Help", prompt: "Help", category: "Overview" },
-  { label: "List Pages", prompt: "List pages", category: "Docs" },
-  { label: "Search Pages", prompt: "Search for React", category: "Docs" },
-  { label: "Categories", prompt: "List categories", category: "Docs" },
-  { label: "Contributors", prompt: "List contributors", category: "Content" },
-  { label: "Demos", prompt: "List demos", category: "Content" },
-  { label: "Installation Guides", prompt: "List installation guides", category: "Content" },
-  { label: "Release Notes", prompt: "List release notes", category: "Content" },
-  { label: "External Links", prompt: "List external links", category: "Content" },
-];
+interface QuickAction {
+  label: string;
+  category: string;
+  prompt: string;
+}
+
+interface DirectAction {
+  label: string;
+  category: string;
+  api: { method: string; url: string };
+}
+
+type ActionItem = QuickAction | DirectAction;
+
+function isDirectAction(a: ActionItem): a is DirectAction {
+  return "api" in a;
+}
 
 interface Message {
   id: string;
@@ -29,34 +34,70 @@ interface AssistantChatProps {
   mode?: "user" | "admin";
 }
 
-const USER_QUICK_ACTIONS = [
-  { label: "Dashboard", prompt: "Show dashboard stats", category: "Overview" },
-  { label: "Help", prompt: "Help", category: "Overview" },
-  { label: "List Pages", prompt: "List pages", category: "Docs" },
-  { label: "Search Pages", prompt: "Search for React", category: "Docs" },
-  { label: "Categories", prompt: "List categories", category: "Docs" },
-  { label: "Contributors", prompt: "List contributors", category: "Content" },
-  { label: "Demos", prompt: "List demos", category: "Content" },
-  { label: "Installation Guides", prompt: "List installation guides", category: "Content" },
-  { label: "Release Notes", prompt: "List release notes", category: "Content" },
-  { label: "External Links", prompt: "List external links", category: "Content" },
+const USER_QUICK_ACTIONS: ActionItem[] = [
+  { label: "Dashboard", category: "Overview", api: { method: "GET", url: "/api/homepage" } },
+  { label: "Help", category: "Overview", prompt: "Help" },
+  { label: "List Pages", category: "Pages", api: { method: "GET", url: "/api/docs" } },
+  { label: "Categories", category: "Categories", api: { method: "GET", url: "/api/categories" } },
+  { label: "Contributors", category: "Content", api: { method: "GET", url: "/api/contributors" } },
+  { label: "Demos", category: "Content", api: { method: "GET", url: "/api/demos" } },
+  { label: "Installation Guides", category: "Content", api: { method: "GET", url: "/api/installation-guides" } },
+  { label: "Release Notes", category: "Content", api: { method: "GET", url: "/api/release-notes" } },
+  { label: "External Links", category: "Content", api: { method: "GET", url: "/api/external-links" } },
 ];
 
-const ADMIN_QUICK_ACTIONS = [
-  { label: "Dashboard", prompt: "Show dashboard stats", category: "Overview" },
-  { label: "Help", prompt: "Help", category: "Overview" },
-  { label: "List Pages", prompt: "List pages", category: "Pages" },
-  { label: "Create Page", prompt: 'Create a page in category "neural-aurora" with title "Test" and slug "test"', category: "Pages" },
-  { label: "Categories", prompt: "List categories", category: "Categories" },
-  { label: "Create Category", prompt: 'Create category "Getting Started" with slug "getting-started"', category: "Categories" },
-  { label: "Users", prompt: "List users", category: "Users" },
-  { label: "Homepage", prompt: "List homepage sections", category: "Homepage" },
-  { label: "Demos", prompt: "List demos", category: "Content" },
-  { label: "Release Notes", prompt: "List release notes", category: "Content" },
+const ADMIN_QUICK_ACTIONS: ActionItem[] = [
+  // Overview
+  { label: "Dashboard", category: "Overview", api: { method: "GET", url: "/api/admin/stats" } },
+  { label: "Help", category: "Overview", prompt: "Help" },
+
+  // Pages
+  { label: "List Pages", category: "Pages", api: { method: "GET", url: "/api/docs" } },
+  { label: "Create Page", category: "Pages", prompt: 'Create a page in category "neural-aurora" with title "Example" and slug "example"' },
+  { label: "Update Page", category: "Pages", prompt: 'Update page with id "..." — set title to "New Title"' },
+  { label: "Delete Page", category: "Pages", prompt: 'Delete page with id "..."' },
+
+  // Categories
+  { label: "Categories", category: "Categories", api: { method: "GET", url: "/api/categories" } },
+  { label: "Create Category", category: "Categories", prompt: 'Create category "Getting Started" with slug "getting-started"' },
+  { label: "Update Category", category: "Categories", prompt: 'Update category with id "..."' },
+  { label: "Delete Category", category: "Categories", prompt: 'Delete category with id "..."' },
+
+  // Users
+  { label: "List Users", category: "Users", api: { method: "GET", url: "/api/users" } },
+
+  // Contributors
+  { label: "Contributors", category: "Contributors", api: { method: "GET", url: "/api/contributors" } },
+  { label: "Create Contributor", category: "Contributors", prompt: 'Create contributor named "Jane Doe" with role "Developer"' },
+
+  // Demos
+  { label: "Demos", category: "Demos", api: { method: "GET", url: "/api/demos" } },
+  { label: "Create Demo", category: "Demos", prompt: 'Create demo titled "Platform Overview" with video URL "..."' },
+
+  // Guides
+  { label: "Installation Guides", category: "Guides", api: { method: "GET", url: "/api/installation-guides" } },
+  { label: "Create Guide", category: "Guides", prompt: 'Create installation guide titled "Quick Start" with slug "quick-start" for project type "neural-aurora"' },
+
+  // Releases
+  { label: "Release Notes", category: "Releases", api: { method: "GET", url: "/api/release-notes" } },
+  { label: "Create Release", category: "Releases", prompt: 'Create release note titled "v2.0" with version "2.0.0" for project type "neural-aurora"' },
+
+  // Links
+  { label: "External Links", category: "Links", api: { method: "GET", url: "/api/external-links" } },
+  { label: "Create Link", category: "Links", prompt: 'Create external link titled "GitHub" with url "https://github.com/..."' },
+
+  // Homepage
+  { label: "All Sections", category: "Homepage", api: { method: "GET", url: "/api/homepage" } },
+  { label: "Projects", category: "Homepage", api: { method: "GET", url: "/api/homepage/projects" } },
+  { label: "Features", category: "Homepage", api: { method: "GET", url: "/api/homepage/features" } },
+  { label: "Stats", category: "Homepage", api: { method: "GET", url: "/api/homepage/stats" } },
+  { label: "Steps", category: "Homepage", api: { method: "GET", url: "/api/homepage/steps" } },
+  { label: "FAQs", category: "Homepage", api: { method: "GET", url: "/api/homepage/faqs" } },
+  { label: "Repos", category: "Homepage", api: { method: "GET", url: "/api/homepage/repos" } },
 ];
 
 export default function AssistantChat({ variant = "full", onClose, mode = "user" }: AssistantChatProps) {
-  const QUICK_ACTIONS = mode === "admin" ? ADMIN_QUICK_ACTIONS : USER_QUICK_ACTIONS;
+  const QUICK_ACTIONS: ActionItem[] = mode === "admin" ? ADMIN_QUICK_ACTIONS : USER_QUICK_ACTIONS;
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -69,14 +110,13 @@ export default function AssistantChat({ variant = "full", onClose, mode = "user"
             "• Dashboard — platform statistics\n" +
             "• Pages — list, search, create, update, delete\n" +
             "• Categories — list, create, update, delete\n" +
-            "• Users — list, approve\n" +
-            "• Homepage — browse and manage all sections\n" +
+            "• Users — list\n" +
+            "• Homepage — browse all sections (Projects, Features, Stats, Steps, FAQs, Repos)\n" +
             "• Contributors, Demos, Guides, Releases, Links\n\n" +
             "Try a quick action below or type what you need."
           : "I'm the **Neural Aurora Docs Assistant**. I can help you explore documentation.\n\n" +
             "**What I can do:**\n" +
-            "• Dashboard — platform statistics\n" +
-            "• Pages — list, search, view\n" +
+            "• Pages — list\n" +
             "• Categories — list\n" +
             "• Contributors — list\n" +
             "• Demos — list\n" +
@@ -205,6 +245,133 @@ export default function AssistantChat({ variant = "full", onClose, mode = "user"
     setShowAllActions(false);
   }, []);
 
+  const extractItems = (data: any): any[] => {
+    if (Array.isArray(data)) return data;
+    if (data.pages) return data.pages;
+    if (data.users) return data.users;
+    if (data.items) return data.items;
+    const arr = Object.values(data).find(Array.isArray);
+    return arr ?? [];
+  };
+
+  const formatItem = (item: any): string => {
+    const title = item.title ?? item.name ?? item.label ?? item.full_name ?? item.id ?? "(untitled)";
+    const meta = item.slug ? ` (\`${item.slug}\`)` : item.email ? ` (${item.email})` : item.url ? ` (${item.url})` : item.version ? ` v${item.version}` : "";
+    const desc = item.excerpt ?? item.description ?? item.bio ?? "";
+    return `- **${title}**${meta}${desc ? ` — ${desc.slice(0, 80)}` : ""}`;
+  };
+
+  const formatApiResult = useCallback(async (action: DirectAction): Promise<string> => {
+    const label = action.label;
+
+    // Dashboard: aggregate stats from all endpoints
+    if (label === "Dashboard") {
+      const endpoints = [
+        { url: "/api/docs", key: "Pages" },
+        { url: "/api/categories", key: "Categories" },
+        { url: "/api/users", key: "Users" },
+        { url: "/api/contributors", key: "Contributors" },
+        { url: "/api/installation-guides", key: "Installation Guides" },
+        { url: "/api/release-notes", key: "Release Notes" },
+      ];
+      const results = await Promise.all(
+        endpoints.map(async (ep) => {
+          try {
+            const r = await fetch(ep.url);
+            const d = await r.json();
+            const items = extractItems(d);
+            return { key: ep.key, count: Array.isArray(items) ? items.length : 0 };
+          } catch { return { key: ep.key, count: "—" }; }
+        }),
+      );
+      const rows = results.map((r) => `| ${r.key} | ${r.count} |`).join("\n");
+      return `**Platform Dashboard**\n\n| Metric | Count |\n|--------|-------|\n${rows}`;
+    }
+
+    // All homepage sections
+    if (label === "All Sections") {
+      const res = await fetch("/api/homepage");
+      const data = await res.json();
+      if (!res.ok) return `**Error:** ${data.error || "Request failed"}`;
+      const sections = ["projects", "features", "stats", "steps", "faqs"];
+      const parts: string[] = [];
+      for (const section of sections) {
+        const items = data[section];
+        if (Array.isArray(items) && items.length > 0) {
+          parts.push(`**${section.charAt(0).toUpperCase() + section.slice(1)}** (${items.length})`);
+          items.slice(0, 5).forEach((item: any) => parts.push(formatItem(item)));
+          if (items.length > 5) parts.push(`  _...and ${items.length - 5} more_`);
+          parts.push("");
+        }
+      }
+      return parts.length > 0 ? parts.join("\n") : "**Homepage**\n\nNo sections found.";
+    }
+
+    const res = await fetch(action.api.url, { method: action.api.method });
+    const data = await res.json();
+    if (!res.ok) return `**Error:** ${data.error || "Request failed"}`;
+
+    const items = extractItems(data);
+    if (!Array.isArray(items) || items.length === 0) return `**${label}**\n\nNo results found.`;
+
+    const rows = items.slice(0, 20).map(formatItem);
+    const count = items.length > 20 ? `\n\n_Showing 20 of ${items.length} results._` : "";
+    return `**${label}** (${items.length})\n\n${rows.join("\n")}${count}`;
+  }, []);
+
+  const handleQuickAction = useCallback(async (action: ActionItem) => {
+    if (isDirectAction(action)) {
+      if (sending) return;
+      setSending(true);
+      const userMsg: Message = {
+        id: `user-${Date.now()}`,
+        role: "user",
+        content: `📊 ${action.label}`,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, userMsg]);
+
+      const loadingId = `loading-${Date.now()}`;
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: loadingId,
+          role: "assistant",
+          content: "",
+          timestamp: new Date(),
+          action: { type: "loading", status: "pending" },
+        },
+      ]);
+
+      try {
+        const content = await formatApiResult(action);
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === loadingId
+              ? { ...m, content, action: { type: action.category.toLowerCase(), status: "success" } }
+              : m,
+          ),
+        );
+      } catch (err) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === loadingId
+              ? {
+                  ...m,
+                  content: err instanceof Error ? err.message : "Something went wrong",
+                  action: { type: "error", status: "error", detail: "Request failed" },
+                }
+              : m,
+          ),
+        );
+      } finally {
+        setSending(false);
+      }
+    } else {
+      handleSend(action.prompt);
+    }
+  }, [sending, handleSend, formatApiResult]);
+
   const hasSentMessage = messages.length > 1;
   const visibleActions = showAllActions ? QUICK_ACTIONS : QUICK_ACTIONS.slice(0, 6);
 
@@ -279,7 +446,7 @@ export default function AssistantChat({ variant = "full", onClose, mode = "user"
                       : { border: "1px solid var(--border-color)", background: "var(--card-bg)", color: "var(--text-primary)" }
                   }
                 >
-                  {msg.action?.type === "processing" && !msg.content ? (
+                  {(msg.action?.type === "processing" || msg.action?.type === "loading") && !msg.content ? (
                     <div className="flex items-center gap-2">
                       <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" style={{ color: "var(--accent-glow)" }}>
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -336,9 +503,9 @@ export default function AssistantChat({ variant = "full", onClose, mode = "user"
         <div className="flex flex-wrap gap-1.5">
           {visibleActions.map((action) => (
             <button
-              key={action.prompt}
+              key={action.label}
               type="button"
-              onClick={() => handleSend(action.prompt)}
+              onClick={() => handleQuickAction(action)}
               className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs transition-colors"
               style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)", color: "var(--text-secondary)" }}
             >
