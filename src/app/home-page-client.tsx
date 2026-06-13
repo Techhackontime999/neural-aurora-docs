@@ -189,12 +189,21 @@ interface HomeFaq {
   answer: string;
 }
 
+interface HomeRepo {
+  id: string;
+  title: string;
+  url: string;
+  is_published: boolean;
+  sort_order: number;
+}
+
 interface HomepageData {
   projects: HomeProject[];
   features: HomeFeature[];
   stats: HomeStat[];
   steps: HomeStep[];
   faqs: HomeFaq[];
+  repos: HomeRepo[];
 }
 
 function FloatingOrbs() {
@@ -778,30 +787,24 @@ export default function HomePageClient({
               Both projects are MIT-licensed open source. Clone, customize,
               contribute, and deploy without restrictions.
             </p>
+            {data.repos.length > 0 && (
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <a
-                href="https://github.com/Techhackontime999/NEURAL-AURORA"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200 active:scale-[0.98]"
-                style={{ background: "var(--card-bg)", border: "1px solid var(--border-color)" }}
-              >
-                <GithubIcon className="w-4 h-4" />
-                NEURAL AURORA Repo
-                <ExternalLink className="w-3 h-3" style={{ color: "var(--text-tertiary)" }} />
-              </a>
-              <a
-                href="https://github.com/Techhackontime999/WACRM"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200 active:scale-[0.98]"
-                style={{ background: "var(--card-bg)", border: "1px solid var(--border-color)" }}
-              >
-                <GithubIcon className="w-4 h-4" />
-                Neural Aurora CRM Repo
-                <ExternalLink className="w-3 h-3" style={{ color: "var(--text-tertiary)" }} />
-              </a>
+              {data.repos.map((repo) => (
+                <a
+                  key={repo.id}
+                  href={repo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200 active:scale-[0.98]"
+                  style={{ background: "var(--card-bg)", border: "1px solid var(--border-color)" }}
+                >
+                  <GithubIcon className="w-4 h-4" />
+                  {repo.title}
+                  <ExternalLink className="w-3 h-3" style={{ color: "var(--text-tertiary)" }} />
+                </a>
+              ))}
             </div>
+            )}
           </div>
           </ScrollReveal>
         </div>

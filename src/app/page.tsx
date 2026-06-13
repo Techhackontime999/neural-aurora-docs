@@ -46,12 +46,21 @@ interface HomeFaq {
   answer: string;
 }
 
+interface HomeRepo {
+  id: string;
+  title: string;
+  url: string;
+  is_published: boolean;
+  sort_order: number;
+}
+
 interface HomepageData {
   projects: HomeProject[];
   features: HomeFeature[];
   stats: HomeStat[];
   steps: HomeStep[];
   faqs: HomeFaq[];
+  repos: HomeRepo[];
 }
 
 interface Demo {
@@ -65,18 +74,19 @@ interface Demo {
 }
 
 export default async function HomePage() {
-  let initialData: HomepageData = { projects: [], features: [], stats: [], steps: [], faqs: [] };
+  let initialData: HomepageData = { projects: [], features: [], stats: [], steps: [], faqs: [], repos: [] };
   let initialDemos: Demo[] = [];
 
   try {
     const supabase = await createClient();
 
-    const [projects, features, stats, steps, faqs, demosResult] = await Promise.all([
+    const [projects, features, stats, steps, faqs, repos, demosResult] = await Promise.all([
       supabase.from("home_projects").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
       supabase.from("home_features").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
       supabase.from("home_stats").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
       supabase.from("home_steps").select("*").eq("is_published", true).order("sort_order", { ascending: true }).order("step_number", { ascending: true }),
       supabase.from("home_faqs").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
+      supabase.from("home_repos").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
       supabase.from("demos").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
     ]);
 
@@ -86,6 +96,7 @@ export default async function HomePage() {
       stats: stats.data ?? [],
       steps: steps.data ?? [],
       faqs: faqs.data ?? [],
+      repos: repos.data ?? [],
     };
     initialDemos = demosResult.data ?? [];
   } catch {}

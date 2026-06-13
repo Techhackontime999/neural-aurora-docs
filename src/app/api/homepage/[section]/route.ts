@@ -9,6 +9,7 @@ const TABLE_MAP: Record<string, string> = {
   stats: "home_stats",
   steps: "home_steps",
   faqs: "home_faqs",
+  repos: "home_repos",
 };
 
 type Section = (typeof VALID_SECTIONS)[number];

@@ -4,17 +4,18 @@ import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   Plus, Edit, Trash2, Eye, EyeOff,
-  Sparkles, BookText, Terminal, Code2, Palette, Rocket, Shield, MessageSquare,
+  Sparkles, BookText, Terminal, Code2, Palette, Rocket, Shield, MessageSquare, GitFork,
 } from "lucide-react";
 import AdminSearch from "@/components/AdminSearch";
 import { containerVariants, itemVariants } from "@/lib/animations";
 
 const TABS = [
-  { key: "projects", label: "Projects" },
-  { key: "features", label: "Features" },
-  { key: "stats", label: "Stats" },
-  { key: "steps", label: "Steps" },
-  { key: "faqs", label: "FAQs" },
+  { key: "projects", label: "Projects", icon: Sparkles },
+  { key: "features", label: "Features", icon: BookText },
+  { key: "stats", label: "Stats", icon: Terminal },
+  { key: "steps", label: "Steps", icon: Code2 },
+  { key: "faqs", label: "FAQs", icon: MessageSquare },
+  { key: "repos", label: "Repos", icon: GitFork },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
@@ -64,7 +65,12 @@ interface Faq extends BaseItem {
   answer: string;
 }
 
-type AnyItem = Project | Feature | Stat | Step | Faq;
+interface Repo extends BaseItem {
+  title: string;
+  url: string;
+}
+
+type AnyItem = Project | Feature | Stat | Step | Faq | Repo;
 
 const ICON_OPTIONS = [
   { value: "sparkles", label: "Sparkles" },
@@ -92,6 +98,7 @@ const TabSearchFields: Record<TabKey, (keyof AnyItem)[]> = {
   stats: ["value", "label"],
   steps: ["title", "description", "code"],
   faqs: ["question", "answer"],
+  repos: ["title", "url"],
 };
 
 export default function AdminHomepagePage() {
@@ -340,6 +347,20 @@ export default function AdminHomepagePage() {
             </div>
           </>
         );
+
+      case "repos":
+        return (
+          <>
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Title *</label>
+              <input type="text" value={(formData.title as string) || ""} onChange={(e) => handleChange("title", e.target.value)} required className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>URL *</label>
+              <input type="text" value={(formData.url as string) || ""} onChange={(e) => handleChange("url", e.target.value)} required className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
+            </div>
+          </>
+        );
     }
   };
 
@@ -433,7 +454,7 @@ export default function AdminHomepagePage() {
             >
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate" style={{ color: "var(--text-primary)" }}>
-                  {tab === "faqs" ? (item as Faq).question : (item as Project | Feature | Step).title}
+                  {tab === "faqs" ? (item as Faq).question : (item as Project | Feature | Step | Repo).title}
                   {tab === "stats" && ` — ${(item as Stat).value} ${(item as Stat).label}`}
                   {tab === "steps" && ` (Step ${(item as Step).step_number})`}
                 </p>
@@ -443,6 +464,7 @@ export default function AdminHomepagePage() {
                   {tab === "features" && (item as Feature).description}
                   {tab === "stats" && (item as Stat).label}
                   {tab === "steps" && (item as Step).description}
+                  {tab === "repos" && (item as Repo).url}
                 </p>
               </div>
               <div className="flex items-center gap-1 ml-3 shrink-0">
