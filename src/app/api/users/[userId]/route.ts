@@ -1,4 +1,3 @@
-import { supabaseAdmin } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -25,9 +24,7 @@ export async function POST(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const admin = supabaseAdmin();
-
-  const { data: profile } = await admin
+  const { data: profile } = await supabase
     .from("profiles")
     .select("role")
     .eq("user_id", user.id)
@@ -41,7 +38,7 @@ export async function POST(
   const { action } = await request.json();
 
   if (action === "approve") {
-    const { error } = await admin
+    const { error } = await supabase
       .from("profiles")
       .update({ is_approved: true })
       .eq("user_id", userId);
@@ -51,7 +48,7 @@ export async function POST(
   }
 
   if (action === "reject") {
-    const { error } = await admin
+    const { error } = await supabase
       .from("profiles")
       .update({ is_approved: false })
       .eq("user_id", userId);
@@ -61,15 +58,13 @@ export async function POST(
   }
 
   if (action === "delete") {
-    // Delete from profiles table first
-    const { error: profileError } = await admin
+    const { error: profileError } = await supabase
       .from("profiles")
       .delete()
       .eq("user_id", userId);
 
     if (profileError) return NextResponse.json({ error: profileError.message }, { status: 500 });
 
-    // Delete from auth.users via Admin API
     const deleteRes = await adminAuthFetch(`/auth/v1/admin/users/${userId}`, {
       method: "DELETE",
     });

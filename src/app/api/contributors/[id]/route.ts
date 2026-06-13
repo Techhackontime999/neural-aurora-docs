@@ -1,5 +1,5 @@
-import { supabaseAdmin } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/require-admin";
+import { createClient } from "@/lib/supabase/server";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function PUT(
@@ -13,8 +13,8 @@ export async function PUT(
   const body = await request.json();
   const { name, role, github_url, avatar_url, bio, sort_order } = body;
 
-  const admin = supabaseAdmin();
-  const { data, error } = await admin
+  const supabase = await createClient();
+  const { data, error } = await supabase
     .from("contributors")
     .update({ name, role, github_url, avatar_url, bio, sort_order })
     .eq("id", id)
@@ -34,8 +34,8 @@ export async function DELETE(
 
   const { id } = await params;
 
-  const admin = supabaseAdmin();
-  const { error } = await admin.from("contributors").delete().eq("id", id);
+  const supabase = await createClient();
+  const { error } = await supabase.from("contributors").delete().eq("id", id);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true });

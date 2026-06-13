@@ -1,5 +1,5 @@
-import { supabaseAdmin } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/require-admin";
+import { createClient } from "@/lib/supabase/server";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function PUT(
@@ -13,8 +13,8 @@ export async function PUT(
   const body = await request.json();
   const { title, url, icon, sort_order } = body;
 
-  const admin = supabaseAdmin();
-  const { data, error } = await admin
+  const supabase = await createClient();
+  const { data, error } = await supabase
     .from("external_links")
     .update({ title, url, icon, sort_order })
     .eq("id", id)
@@ -34,8 +34,8 @@ export async function DELETE(
 
   const { id } = await params;
 
-  const admin = supabaseAdmin();
-  const { error } = await admin
+  const supabase = await createClient();
+  const { error } = await supabase
     .from("external_links")
     .delete()
     .eq("id", id);

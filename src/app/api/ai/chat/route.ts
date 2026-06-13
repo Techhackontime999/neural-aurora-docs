@@ -1,7 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { callAi } from "@/lib/ai/provider";
 import { USER_TOOLS, ADMIN_TOOLS, TOOL_TO_HANDLER } from "@/lib/ai/tools";
-import { supabaseAdmin } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/require-admin";
 
@@ -170,7 +169,7 @@ const ADMIN_HANDLERS: Record<string, (args: any) => Promise<any>> = {
   ...USER_HANDLERS,
 
   async dashboard_stats() {
-    const admin = supabaseAdmin();
+    const admin = await createClient();
     const [pages, categories, users, contributors, guides, releases] = await Promise.all([
       admin.from("doc_pages").select("*", { count: "exact", head: true }),
       admin.from("doc_categories").select("*", { count: "exact", head: true }),
@@ -190,14 +189,14 @@ const ADMIN_HANDLERS: Record<string, (args: any) => Promise<any>> = {
   },
 
   async list_pages(_args: any) {
-    const admin = supabaseAdmin();
+    const admin = await createClient();
     const { data, error } = await admin.from("doc_pages").select("id, title, slug, excerpt, category_id, status, created_at").order("sort_order", { ascending: true });
     if (error) return { error: error.message };
     return { pages: data };
   },
 
   async create_page(args: any) {
-    const admin = supabaseAdmin();
+    const admin = await createClient();
     const { data, error } = await admin
       .from("doc_pages")
       .insert({ category_id: args.category_id, title: args.title, slug: args.slug, content: args.content || "", excerpt: args.excerpt || "", status: args.status || "published" })
@@ -207,7 +206,7 @@ const ADMIN_HANDLERS: Record<string, (args: any) => Promise<any>> = {
   },
 
   async update_page(args: any) {
-    const admin = supabaseAdmin();
+    const admin = await createClient();
     const updates: any = {};
     if (args.title) updates.title = args.title;
     if (args.content !== undefined) updates.content = args.content;
@@ -221,21 +220,21 @@ const ADMIN_HANDLERS: Record<string, (args: any) => Promise<any>> = {
   },
 
   async delete_page(args: any) {
-    const admin = supabaseAdmin();
+    const admin = await createClient();
     const { error } = await admin.from("doc_pages").delete().eq("id", args.id);
     if (error) return { error: error.message };
     return { deleted: true };
   },
 
   async create_category(args: any) {
-    const admin = supabaseAdmin();
+    const admin = await createClient();
     const { data, error } = await admin.from("doc_categories").insert({ name: args.name, slug: args.slug, description: args.description || "", icon: args.icon || "book" }).select().single();
     if (error) return { error: error.message };
     return { category: data };
   },
 
   async update_category(args: any) {
-    const admin = supabaseAdmin();
+    const admin = await createClient();
     const updates: any = {};
     if (args.name) updates.name = args.name;
     if (args.description !== undefined) updates.description = args.description;
@@ -247,28 +246,28 @@ const ADMIN_HANDLERS: Record<string, (args: any) => Promise<any>> = {
   },
 
   async delete_category(args: any) {
-    const admin = supabaseAdmin();
+    const admin = await createClient();
     const { error } = await admin.from("doc_categories").delete().eq("id", args.id);
     if (error) return { error: error.message };
     return { deleted: true };
   },
 
   async list_users() {
-    const admin = supabaseAdmin();
+    const admin = await createClient();
     const { data, error } = await admin.from("profiles").select("*").order("created_at", { ascending: false });
     if (error) return { error: error.message };
     return { users: data };
   },
 
   async approve_user(args: any) {
-    const admin = supabaseAdmin();
+    const admin = await createClient();
     const { data, error } = await admin.from("profiles").update({ is_approved: true }).eq("user_id", args.user_id).select().single();
     if (error) return { error: error.message };
     return { user: data };
   },
 
   async list_homepage_sections(args: any) {
-    const admin = supabaseAdmin();
+    const admin = await createClient();
     const sections = args?.section ? [args.section] : ["projects", "features", "stats", "steps", "faqs", "repos"];
     const results: any = {};
     for (const section of sections) {
@@ -287,7 +286,7 @@ const ADMIN_HANDLERS: Record<string, (args: any) => Promise<any>> = {
     const table: Record<string, string> = { projects: "home_projects", features: "home_features", stats: "home_stats", steps: "home_steps", faqs: "home_faqs", repos: "home_repos" };
     const tableName = table[args.section as string];
     if (!tableName) return { error: `Unknown section: ${args.section}` };
-    const admin = supabaseAdmin();
+    const admin = await createClient();
     const { data, error } = await admin.from(tableName).insert({ title: args.title, description: args.description || "" }).select().single();
     if (error) return { error: error.message };
     return { item: data };
@@ -297,7 +296,7 @@ const ADMIN_HANDLERS: Record<string, (args: any) => Promise<any>> = {
     const table: Record<string, string> = { projects: "home_projects", features: "home_features", stats: "home_stats", steps: "home_steps", faqs: "home_faqs", repos: "home_repos" };
     const tableName = table[args.section as string];
     if (!tableName) return { error: `Unknown section: ${args.section}` };
-    const admin = supabaseAdmin();
+    const admin = await createClient();
     const { error } = await admin.from(tableName).delete().eq("id", args.id);
     if (error) return { error: error.message };
     return { deleted: true };

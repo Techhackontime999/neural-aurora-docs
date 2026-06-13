@@ -1,5 +1,5 @@
-import { supabaseAdmin } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/require-admin";
+import { createClient } from "@/lib/supabase/server";
 import { NextResponse, type NextRequest } from "next/server";
 
 const VALID_SECTIONS = ["projects", "features", "stats", "steps", "faqs"] as const;
@@ -31,9 +31,9 @@ export async function PUT(
   }
 
   const body = await request.json();
-  const admin = supabaseAdmin();
+  const supabase = await createClient();
   const table = TABLE_MAP[section];
-  const { data, error } = await admin
+  const { data, error } = await supabase
     .from(table)
     .update(body)
     .eq("id", id)
@@ -56,9 +56,9 @@ export async function DELETE(
     return NextResponse.json({ error: "Invalid section" }, { status: 400 });
   }
 
-  const admin = supabaseAdmin();
+  const supabase = await createClient();
   const table = TABLE_MAP[section];
-  const { error } = await admin.from(table).delete().eq("id", id);
+  const { error } = await supabase.from(table).delete().eq("id", id);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true });
