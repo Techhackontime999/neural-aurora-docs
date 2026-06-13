@@ -21,7 +21,7 @@ export async function requireAdmin() {
     const admin = supabaseAdmin();
     const { data } = await admin
       .from("profiles")
-      .select("role")
+      .select("role, is_approved")
       .eq("user_id", user.id)
       .maybeSingle();
     profile = data;
@@ -29,7 +29,7 @@ export async function requireAdmin() {
     return { error: NextResponse.json({ error: "Database service unavailable" }, { status: 503 }), user: null };
   }
 
-  if (!profile || profile.role !== "admin") {
+  if (!profile || (profile.role !== "admin" && profile.is_approved !== true)) {
     return { error: NextResponse.json({ error: "Forbidden" }, { status: 403 }), user: null };
   }
 
