@@ -100,7 +100,7 @@ export default function AssistantChat({ variant = "full", onClose, mode = "user"
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
     }
   }, [messages]);
 
@@ -124,10 +124,8 @@ export default function AssistantChat({ variant = "full", onClose, mode = "user"
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, userMsg]);
-      if (text === undefined) {
-        setInput("");
-        if (inputRef.current) inputRef.current.style.height = "auto";
-      }
+      setInput("");
+      if (inputRef.current) inputRef.current.style.height = "auto";
 
       const thinkingId = `thinking-${Date.now()}`;
       setMessages((prev) => [
@@ -204,6 +202,7 @@ export default function AssistantChat({ variant = "full", onClose, mode = "user"
         action: { type: "ready", status: "success" },
       },
     ]);
+    setShowAllActions(false);
   }, []);
 
   const hasSentMessage = messages.length > 1;
@@ -212,7 +211,7 @@ export default function AssistantChat({ variant = "full", onClose, mode = "user"
   const containerClass =
     variant === "floating"
       ? "flex h-full flex-col rounded-2xl border overflow-hidden"
-      : "flex h-full flex-col";
+      : "grid grid-rows-[auto_1fr_auto] h-full overflow-hidden";
 
   return (
     <div className={containerClass} style={{ borderColor: "var(--border-color)", background: "var(--bg-primary)" }}>
@@ -256,7 +255,7 @@ export default function AssistantChat({ variant = "full", onClose, mode = "user"
       </div>
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto">
+      <div ref={scrollRef} className="min-h-0 overflow-y-auto">
         <div className="space-y-1 px-3 py-3 sm:px-4 sm:py-4">
           {messages.map((msg) => (
             <div
@@ -326,10 +325,13 @@ export default function AssistantChat({ variant = "full", onClose, mode = "user"
         </div>
       </div>
 
+      {/* Bottom */}
+      <div>
       {/* Quick Actions */}
+      {!hasSentMessage && (
       <div className="border-t px-4 py-3" style={{ borderColor: "var(--border-color)" }}>
         <p className="mb-2 text-[11px] font-medium uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>
-          Quick Actions{hasSentMessage ? " (click any)" : ""}
+          Quick Actions
         </p>
         <div className="flex flex-wrap gap-1.5">
           {visibleActions.map((action) => (
@@ -365,6 +367,7 @@ export default function AssistantChat({ variant = "full", onClose, mode = "user"
           )}
         </div>
       </div>
+      )}
 
       {/* Input */}
       <div className="border-t px-3 py-2 sm:px-4 sm:py-3" style={{ borderColor: "var(--border-color)", background: "var(--bg-secondary)" }}>
@@ -413,6 +416,8 @@ export default function AssistantChat({ variant = "full", onClose, mode = "user"
           {mode === "admin" ? "Pages · Categories · Users · Homepage · Content · Dashboard" : "Pages · Categories · Demos · Guides · Releases · Dashboard"} · Shift+Enter for new line
         </p>
       </div>
+      </div>
     </div>
   );
 }
+

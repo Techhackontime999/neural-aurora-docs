@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 
 function NeuralIcon({ size = 32 }: { size?: number }) {
-  const s = size / 100;
+  const s = Math.max(size ?? 32, 1) / 100;
 
   return (
     <motion.svg

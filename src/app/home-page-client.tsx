@@ -391,50 +391,60 @@ export default function HomePageClient({
             <BrandLogo size="small" showWordmark={true} />
           </Link>
           <div className="flex items-center gap-3">
-            <div ref={productsRef} className="relative">
+            <div ref={productsRef}>
+              <div className="hidden lg:block relative">
+                <button
+                  onClick={() => setProductsOpen(!productsOpen)}
+                  className="text-xs transition-colors flex items-center gap-1"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Products
+                  <ChevronDown className={`w-3 h-3 transition-transform ${productsOpen ? "rotate-180" : ""}`} />
+                </button>
+                <AnimatePresence>
+                  {productsOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden"
+                    >
+                      {data.projects.length === 0 ? (
+                        <div className="px-4 py-6 text-xs text-slate-400 dark:text-slate-500 text-center">
+                          No products available
+                        </div>
+                      ) : (
+                        data.projects.map((p) => (
+                          <a
+                            key={p.id}
+                            href={p.href}
+                            onClick={() => setProductsOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+                          >
+                            <div className="flex-1 min-w-0">
+                              <span className="text-sm font-medium text-slate-900 dark:text-white group-hover:text-violet-500 transition-colors">
+                                {p.title}
+                              </span>
+                              <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
+                                {p.tagline}
+                              </p>
+                            </div>
+                          </a>
+                        ))
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
               <button
                 onClick={() => setProductsOpen(!productsOpen)}
-                className="text-xs transition-colors flex items-center gap-1"
+                className="lg:hidden text-xs transition-colors flex items-center gap-1"
                 style={{ color: "var(--text-secondary)" }}
               >
                 Products
                 <ChevronDown className={`w-3 h-3 transition-transform ${productsOpen ? "rotate-180" : ""}`} />
               </button>
-              <AnimatePresence>
-                {productsOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden"
-                  >
-                    {data.projects.length === 0 ? (
-                      <div className="px-4 py-6 text-xs text-slate-400 dark:text-slate-500 text-center">
-                        No products available
-                      </div>
-                    ) : (
-                      data.projects.map((p) => (
-                        <a
-                          key={p.id}
-                          href={p.href}
-                          onClick={() => setProductsOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
-                        >
-                          <div className="flex-1 min-w-0">
-                            <span className="text-sm font-medium text-slate-900 dark:text-white group-hover:text-violet-500 transition-colors">
-                              {p.title}
-                            </span>
-                            <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
-                              {p.tagline}
-                            </p>
-                          </div>
-                        </a>
-                      ))
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
             <Link
               href="/docs"
@@ -492,6 +502,55 @@ export default function HomePageClient({
           </div>
         </div>
       </header>
+
+      {productsOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/20 dark:bg-black/50 backdrop-blur-sm lg:hidden"
+          onClick={() => setProductsOpen(false)}
+        />
+      )}
+
+      <AnimatePresence>
+        {productsOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.15 }}
+            className="fixed left-0 right-0 top-14 z-50 lg:hidden max-h-[60vh] overflow-y-auto"
+            style={{
+              background: "var(--bg-secondary)",
+              borderBottom: "1px solid var(--border-color)",
+            }}
+          >
+            {data.projects.length === 0 ? (
+              <div className="px-4 py-6 text-xs text-center" style={{ color: "var(--text-tertiary)" }}>
+                No products available
+              </div>
+            ) : (
+              <div className="p-3 space-y-0.5">
+                {data.projects.map((p) => (
+                  <a
+                    key={p.id}
+                    href={p.href}
+                    onClick={() => setProductsOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    <div
+                      className="w-1.5 h-1.5 rounded-full shrink-0"
+                      style={{ backgroundColor: p.gradient?.startsWith("#") ? p.gradient : "var(--accent-glow)" }}
+                    />
+                    <span className="text-sm" style={{ color: "var(--text-primary)" }}>
+                      {p.title}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Hero */}
       <section className="relative pt-20 pb-16 lg:pt-28 lg:pb-20 px-4 overflow-hidden">

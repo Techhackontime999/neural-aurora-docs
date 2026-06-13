@@ -395,12 +395,12 @@ export default function AdminHomepagePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6" style={{ borderBottom: "1px solid var(--border-color)" }}>
+      <div className="flex gap-1 mb-6 overflow-x-auto" style={{ borderBottom: "1px solid var(--border-color)" }}>
         {TABS.map((t) => (
           <button
             key={t.key}
             onClick={() => { setTab(t.key); setShowForm(false); setSearch(""); }}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
               tab === t.key
                 ? "border-aurora-500"
                 : "border-transparent"

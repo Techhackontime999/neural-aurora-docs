@@ -74,7 +74,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
   if (!user || !profile || profile.is_approved !== true) return null;
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--bg-primary)" }}>
+    <div className="h-screen flex flex-col" style={{ background: "var(--bg-primary)" }}>
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
@@ -161,7 +161,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div className="lg:pl-64 flex flex-col flex-1 min-h-0">
         {/* Top bar */}
         <header className="sticky top-0 z-30 h-14"
           style={{ borderBottom: "1px solid var(--border-color)", background: "var(--glass-bg)", backdropFilter: "blur(12px)" }}
@@ -196,7 +196,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <main className="p-6">{children}</main>
+        <main className="flex flex-col flex-1 min-h-0 p-6">{children}</main>
       </div>
     </div>
   );

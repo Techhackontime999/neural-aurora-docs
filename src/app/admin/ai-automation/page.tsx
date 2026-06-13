@@ -4,7 +4,7 @@ import AssistantChat from "@/components/AssistantChat";
 
 export default function AdminAiAutomationPage() {
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       <div className="mb-4">
         <h1 className="text-2xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>
           AI Automation
@@ -14,7 +14,7 @@ export default function AdminAiAutomationPage() {
         </p>
       </div>
       <div
-        className="min-h-0 flex-1 rounded-2xl border overflow-hidden"
+        className="min-h-0 flex-1 overflow-hidden rounded-2xl border"
         style={{ borderColor: "var(--border-color)", background: "var(--bg-primary)" }}
       >
         <AssistantChat variant="full" mode="admin" />

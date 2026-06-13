@@ -158,11 +158,12 @@ export default function Navbar() {
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setProductsOpen(!productsOpen)}
-              className="lg:hidden p-1.5 text-xs font-medium transition-colors"
+              className="lg:hidden p-1.5 text-xs font-medium transition-colors flex items-center gap-1"
               style={{ color: "var(--text-secondary)" }}
               aria-label="Products"
             >
               Products
+              <ChevronDown className={`w-3 h-3 transition-transform ${productsOpen ? "rotate-180" : ""}`} />
             </button>
 
             <button
