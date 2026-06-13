@@ -25,7 +25,7 @@ export function DocsShell({ children }: { children: React.ReactNode }) {
       <Navbar />
       <div className="flex max-w-[1400px] mx-auto">
         <aside className="hidden lg:block w-64 shrink-0">
-          <div className="sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+          <div className="sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto" style={{ borderRight: "1px solid var(--border-color)", background: "var(--bg-secondary)" }}>
             <Sidebar />
           </div>
         </aside>

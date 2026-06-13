@@ -97,19 +97,19 @@ export default function AdminCategoriesPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>
           Categories
         </h1>
       </div>
 
-      <form onSubmit={handleCreate} className="flex flex-wrap gap-3 mb-6 p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+      <form onSubmit={handleCreate} className="flex flex-wrap gap-3 mb-6 p-4 rounded-xl" style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}>
         <input
           type="text"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           placeholder="Category name"
           required
-          className="flex-1 min-w-[200px] px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500"
+          className="flex-1 min-w-[200px] px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}
         />
         <input
           type="text"
@@ -117,14 +117,14 @@ export default function AdminCategoriesPage() {
           onChange={(e) => setNewSlug(e.target.value)}
           placeholder="category-slug"
           required
-          className="flex-1 min-w-[150px] px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-aurora-500"
+          className="flex-1 min-w-[150px] px-3 py-2 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}
         />
         <input
           type="text"
           value={newDescription}
           onChange={(e) => setNewDescription(e.target.value)}
           placeholder="Description (optional)"
-          className="flex-1 min-w-[200px] px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500"
+          className="flex-1 min-w-[200px] px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}
         />
         <button
           type="submit"
@@ -145,7 +145,7 @@ export default function AdminCategoriesPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-3 mb-4 px-4 py-2.5 rounded-lg bg-aurora-50 dark:bg-aurora-950/20 border border-aurora-200 dark:border-aurora-900"
         >
-          <span className="text-sm text-aurora-700 dark:text-aurora-300 font-medium">
+          <span className="text-sm font-medium" style={{ color: "var(--accent-glow)" }}>
             {selected.size} selected
           </span>
           <button
@@ -158,7 +158,7 @@ export default function AdminCategoriesPage() {
           </button>
           <button
             onClick={clearSelection}
-            className="px-3 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]"
+            className="px-3 py-1.5 rounded-md text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]" style={{ border: "1px solid var(--border-color)", color: "var(--text-secondary)" }}
           >
             Clear Selection
           </button>
@@ -166,9 +166,9 @@ export default function AdminCategoriesPage() {
       )}
 
       {loading ? (
-        <div className="text-center py-12 text-sm text-slate-400">Loading...</div>
+        <div className="text-center py-12 text-sm" style={{ color: "var(--text-tertiary)" }}>Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-12 text-sm text-slate-400">
+        <div className="text-center py-12 text-sm" style={{ color: "var(--text-tertiary)" }}>
           {search ? "No categories match your search." : "No categories yet."}
         </div>
       ) : (
@@ -183,9 +183,9 @@ export default function AdminCategoriesPage() {
               key={cat.id}
               variants={itemVariants}
               layout
-              className={`p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 ${
+              className={`p-4 rounded-xl ${
                 selected.has(cat.id) ? "ring-2 ring-aurora-500/30" : ""
-              }`}
+              }`} style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}
             >
               {editingId === cat.id ? (
                 <div className="flex flex-wrap gap-3">
@@ -193,13 +193,13 @@ export default function AdminCategoriesPage() {
                     type="text"
                     defaultValue={cat.name}
                     id={`name-${cat.id}`}
-                    className="flex-1 min-w-[200px] px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500"
+                    className="flex-1 min-w-[200px] px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}
                   />
                   <input
                     type="text"
                     defaultValue={cat.slug}
                     id={`slug-${cat.id}`}
-                    className="flex-1 min-w-[150px] px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-aurora-500"
+                    className="flex-1 min-w-[150px] px-3 py-2 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}
                   />
                   <button
                     onClick={() => {
@@ -207,13 +207,13 @@ export default function AdminCategoriesPage() {
                       const slugInput = document.getElementById(`slug-${cat.id}`) as HTMLInputElement;
                       handleUpdate(cat.id, { name: nameInput.value, slug: slugInput.value });
                     }}
-                    className="p-2 rounded-lg text-green-600 hover:bg-green-50 dark:hover:bg-green-950/30 transition-colors"
+                      className="p-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-950/30 transition-colors" style={{ color: "var(--accent-glow)" }}
                   >
                     <Check className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setEditingId(null)}
-                    className="p-2 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" style={{ color: "var(--text-tertiary)" }}
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -228,23 +228,23 @@ export default function AdminCategoriesPage() {
                       className="rounded border-slate-300 dark:border-slate-600 text-aurora-500 focus:ring-aurora-500"
                     />
                     <div>
-                      <span className="text-sm font-medium text-slate-900 dark:text-white">{cat.name}</span>
-                      <span className="text-xs text-slate-400 ml-3 font-mono">{cat.slug}</span>
+                      <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{cat.name}</span>
+                      <span className="text-xs ml-3 font-mono" style={{ color: "var(--text-tertiary)" }}>{cat.slug}</span>
                       {cat.description && (
-                        <span className="text-xs text-slate-500 ml-3">{cat.description}</span>
+                        <span className="text-xs ml-3" style={{ color: "var(--text-secondary)" }}>{cat.description}</span>
                       )}
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => setEditingId(cat.id)}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                      className="p-1.5 rounded-lg hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" style={{ color: "var(--text-tertiary)" }}
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleSingleDelete(cat.id)}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                      className="p-1.5 rounded-lg hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors" style={{ color: "var(--text-tertiary)" }}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>

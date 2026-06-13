@@ -204,52 +204,52 @@ export default function AdminHomepagePage() {
         return (
           <>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title *</label>
-              <input type="text" value={(formData.title as string) || ""} onChange={(e) => handleChange("title", e.target.value)} required className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Title *</label>
+              <input type="text" value={(formData.title as string) || ""} onChange={(e) => handleChange("title", e.target.value)} required className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Tagline</label>
-              <input type="text" value={(formData.tagline as string) || ""} onChange={(e) => handleChange("tagline", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Tagline</label>
+              <input type="text" value={(formData.tagline as string) || ""} onChange={(e) => handleChange("tagline", e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description</label>
-              <textarea value={(formData.description as string) || ""} onChange={(e) => handleChange("description", e.target.value)} rows={3} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Description</label>
+              <textarea value={(formData.description as string) || ""} onChange={(e) => handleChange("description", e.target.value)} rows={3} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Href</label>
-              <input type="text" value={(formData.href as string) || ""} onChange={(e) => handleChange("href", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Href</label>
+              <input type="text" value={(formData.href as string) || ""} onChange={(e) => handleChange("href", e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Icon</label>
-              <select value={(formData.icon as string) || "sparkles"} onChange={(e) => handleChange("icon", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500">
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Icon</label>
+              <select value={(formData.icon as string) || "sparkles"} onChange={(e) => handleChange("icon", e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}>
                 {ICON_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Gradient</label>
-              <select value={(formData.gradient as string) || ""} onChange={(e) => handleChange("gradient", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500">
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Gradient</label>
+              <select value={(formData.gradient as string) || ""} onChange={(e) => handleChange("gradient", e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}>
                 {GRADIENT_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Stat Label 1</label>
-              <input type="text" value={(formData.stat_label_1 as string) || ""} onChange={(e) => handleChange("stat_label_1", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Stat Label 1</label>
+              <input type="text" value={(formData.stat_label_1 as string) || ""} onChange={(e) => handleChange("stat_label_1", e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Stat Value 1</label>
-              <input type="text" value={(formData.stat_value_1 as string) || ""} onChange={(e) => handleChange("stat_value_1", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Stat Value 1</label>
+              <input type="text" value={(formData.stat_value_1 as string) || ""} onChange={(e) => handleChange("stat_value_1", e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Stat Label 2</label>
-              <input type="text" value={(formData.stat_label_2 as string) || ""} onChange={(e) => handleChange("stat_label_2", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Stat Label 2</label>
+              <input type="text" value={(formData.stat_label_2 as string) || ""} onChange={(e) => handleChange("stat_label_2", e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Stat Value 2</label>
-              <input type="text" value={(formData.stat_value_2 as string) || ""} onChange={(e) => handleChange("stat_value_2", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Stat Value 2</label>
+              <input type="text" value={(formData.stat_value_2 as string) || ""} onChange={(e) => handleChange("stat_value_2", e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
           </>
         );
@@ -258,24 +258,24 @@ export default function AdminHomepagePage() {
         return (
           <>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title *</label>
-              <input type="text" value={(formData.title as string) || ""} onChange={(e) => handleChange("title", e.target.value)} required className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Title *</label>
+              <input type="text" value={(formData.title as string) || ""} onChange={(e) => handleChange("title", e.target.value)} required className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description</label>
-              <textarea value={(formData.description as string) || ""} onChange={(e) => handleChange("description", e.target.value)} rows={3} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Description</label>
+              <textarea value={(formData.description as string) || ""} onChange={(e) => handleChange("description", e.target.value)} rows={3} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Icon</label>
-              <select value={(formData.icon as string) || "book-text"} onChange={(e) => handleChange("icon", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500">
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Icon</label>
+              <select value={(formData.icon as string) || "book-text"} onChange={(e) => handleChange("icon", e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}>
                 {ICON_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Span</label>
-              <select value={(formData.span as string) || "half"} onChange={(e) => handleChange("span", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500">
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Span</label>
+              <select value={(formData.span as string) || "half"} onChange={(e) => handleChange("span", e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}>
                 <option value="half">Half</option>
                 <option value="full">Full</option>
               </select>
@@ -287,16 +287,16 @@ export default function AdminHomepagePage() {
         return (
           <>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Value *</label>
-              <input type="text" value={(formData.value as string) || ""} onChange={(e) => handleChange("value", e.target.value)} required className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Value *</label>
+              <input type="text" value={(formData.value as string) || ""} onChange={(e) => handleChange("value", e.target.value)} required className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Label *</label>
-              <input type="text" value={(formData.label as string) || ""} onChange={(e) => handleChange("label", e.target.value)} required className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Label *</label>
+              <input type="text" value={(formData.label as string) || ""} onChange={(e) => handleChange("label", e.target.value)} required className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Icon</label>
-              <select value={(formData.icon as string) || "book-text"} onChange={(e) => handleChange("icon", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500">
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Icon</label>
+              <select value={(formData.icon as string) || "book-text"} onChange={(e) => handleChange("icon", e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}>
                 {ICON_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
@@ -309,20 +309,20 @@ export default function AdminHomepagePage() {
         return (
           <>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Step Number *</label>
-              <input type="number" value={(formData.step_number as number) || ""} onChange={(e) => handleChange("step_number", Number(e.target.value))} required className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Step Number *</label>
+              <input type="number" value={(formData.step_number as number) || ""} onChange={(e) => handleChange("step_number", Number(e.target.value))} required className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title *</label>
-              <input type="text" value={(formData.title as string) || ""} onChange={(e) => handleChange("title", e.target.value)} required className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Title *</label>
+              <input type="text" value={(formData.title as string) || ""} onChange={(e) => handleChange("title", e.target.value)} required className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description</label>
-              <textarea value={(formData.description as string) || ""} onChange={(e) => handleChange("description", e.target.value)} rows={2} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Description</label>
+              <textarea value={(formData.description as string) || ""} onChange={(e) => handleChange("description", e.target.value)} rows={2} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Code</label>
-              <input type="text" value={(formData.code as string) || ""} onChange={(e) => handleChange("code", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Code</label>
+              <input type="text" value={(formData.code as string) || ""} onChange={(e) => handleChange("code", e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
           </>
         );
@@ -331,12 +331,12 @@ export default function AdminHomepagePage() {
         return (
           <>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Question *</label>
-              <input type="text" value={(formData.question as string) || ""} onChange={(e) => handleChange("question", e.target.value)} required className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Question *</label>
+              <input type="text" value={(formData.question as string) || ""} onChange={(e) => handleChange("question", e.target.value)} required className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Answer *</label>
-              <textarea value={(formData.answer as string) || ""} onChange={(e) => handleChange("answer", e.target.value)} rows={4} required className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Answer *</label>
+              <textarea value={(formData.answer as string) || ""} onChange={(e) => handleChange("answer", e.target.value)} rows={4} required className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
           </>
         );
@@ -346,13 +346,13 @@ export default function AdminHomepagePage() {
   const renderSortAndPublish = () => (
     <>
       <div>
-        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Sort Order</label>
-        <input type="number" value={(formData.sort_order as number) ?? 0} onChange={(e) => handleChange("sort_order", Number(e.target.value))} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+        <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Sort Order</label>
+        <input type="number" value={(formData.sort_order as number) ?? 0} onChange={(e) => handleChange("sort_order", Number(e.target.value))} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
       </div>
       <div className="flex items-end pb-2">
         <label className="flex items-center gap-2">
           <input type="checkbox" checked={(formData.is_published as boolean) !== false} onChange={(e) => handleChange("is_published", e.target.checked)} className="w-4 h-4 rounded border-slate-300 text-aurora-500 focus:ring-aurora-500" />
-          <span className="text-sm text-slate-700 dark:text-slate-300">Published</span>
+          <span className="text-sm" style={{ color: "var(--text-secondary)" }}>Published</span>
         </label>
       </div>
     </>
@@ -361,7 +361,7 @@ export default function AdminHomepagePage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>
           Homepage Content
         </h1>
         <button
@@ -374,16 +374,18 @@ export default function AdminHomepagePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex gap-1 mb-6" style={{ borderBottom: "1px solid var(--border-color)" }}>
         {TABS.map((t) => (
           <button
             key={t.key}
             onClick={() => { setTab(t.key); setShowForm(false); setSearch(""); }}
             className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
               tab === t.key
-                ? "border-aurora-500 text-aurora-600 dark:text-aurora-400"
-                : "border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-white"
-            }`}
+                ? "border-aurora-500"
+                : "border-transparent"
+            }`} style={{
+              color: tab === t.key ? "var(--accent-glow)" : "var(--text-secondary)",
+            }}
           >
             {t.label}
           </button>
@@ -392,7 +394,7 @@ export default function AdminHomepagePage() {
 
       {/* Form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="p-4 mb-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 mb-6 rounded-xl space-y-4" style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {renderFormFields()}
             {renderSortAndPublish()}
@@ -410,9 +412,9 @@ export default function AdminHomepagePage() {
 
       {/* List */}
       {loading ? (
-        <div className="text-center py-12 text-sm text-slate-400">Loading...</div>
+        <div className="text-center py-12 text-sm" style={{ color: "var(--text-tertiary)" }}>Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-12 text-sm text-slate-400">
+        <div className="text-center py-12 text-sm" style={{ color: "var(--text-tertiary)" }}>
           {search ? `No ${tab} match your search.` : "No items yet. Add one above."}
         </div>
       ) : (
@@ -427,15 +429,15 @@ export default function AdminHomepagePage() {
               key={item.id}
               variants={itemVariants}
               layout
-              className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between"
+              className="p-4 rounded-xl flex items-center justify-between" style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}
             >
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                <p className="text-sm font-medium truncate" style={{ color: "var(--text-primary)" }}>
                   {tab === "faqs" ? (item as Faq).question : (item as Project | Feature | Step).title}
                   {tab === "stats" && ` — ${(item as Stat).value} ${(item as Stat).label}`}
                   {tab === "steps" && ` (Step ${(item as Step).step_number})`}
                 </p>
-                <p className="text-xs text-slate-400 mt-0.5 truncate">
+                <p className="text-xs mt-0.5 truncate" style={{ color: "var(--text-tertiary)" }}>
                   {tab === "faqs" && (item as Faq).answer}
                   {tab === "projects" && (item as Project).tagline}
                   {tab === "features" && (item as Feature).description}
@@ -446,15 +448,15 @@ export default function AdminHomepagePage() {
               <div className="flex items-center gap-1 ml-3 shrink-0">
                 <button
                   onClick={() => handleTogglePublish(item)}
-                  className={`p-1.5 rounded-lg transition-colors ${item.is_published ? "text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800" : "text-slate-500 hover:text-green-500 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+                  className={`p-1.5 rounded-lg transition-colors ${item.is_published ? "hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800" : "hover:text-green-500 hover:bg-slate-100 dark:hover:bg-slate-800"}`} style={{ color: item.is_published ? "var(--text-tertiary)" : "var(--text-secondary)" }}
                   title={item.is_published ? "Unpublish" : "Publish"}
                 >
                   {item.is_published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                 </button>
-                <button onClick={() => handleEdit(item)} className="p-1.5 rounded-lg text-slate-400 hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <button onClick={() => handleEdit(item)} className="p-1.5 rounded-lg hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" style={{ color: "var(--text-tertiary)" }}>
                   <Edit className="w-4 h-4" />
                 </button>
-                <button onClick={() => handleDelete(item.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
+                <button onClick={() => handleDelete(item.id)} className="p-1.5 rounded-lg hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors" style={{ color: "var(--text-tertiary)" }}>
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>

@@ -181,7 +181,14 @@ function DarkBackground() {
   const { scene } = useThree();
 
   useEffect(() => {
-    scene.background = new THREE.Color("#050508");
+    const update = () => {
+      const isDark = document.documentElement.getAttribute("data-theme") !== "light";
+      scene.background = new THREE.Color(isDark ? "#050508" : "#faf8f5");
+    };
+    update();
+    const observer = new MutationObserver(update);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
   }, [scene]);
 
   return null;

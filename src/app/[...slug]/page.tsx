@@ -22,17 +22,18 @@ function DocContent({
         {categorySlug && (
           <Link
             href={`/${categorySlug}`}
-            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-aurora-600 dark:hover:text-aurora-400 transition-colors mb-4"
+            className="inline-flex items-center gap-1.5 text-xs mb-4 opacity-70 hover:opacity-100 transition-all"
+            style={{ color: "var(--text-tertiary)" }}
           >
             <ArrowLeft className="w-3 h-3" />
             Back to {categoryName ?? categorySlug}
           </Link>
         )}
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-3xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>
           {page.title}
         </h1>
         {page.excerpt && (
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+          <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>
             {page.excerpt}
           </p>
         )}
@@ -44,7 +45,8 @@ function DocContent({
 
       <Link
         href="/"
-        className="text-sm text-aurora-600 dark:text-aurora-400 hover:underline font-medium"
+        className="text-sm hover:underline font-medium"
+        style={{ color: "var(--accent-glow)" }}
       >
         &larr; Back to home
       </Link>

@@ -2,12 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sun, Moon, Menu, X, Search } from "lucide-react";
+import { Sun, Moon, Menu, X, Search, ChevronDown, ExternalLink } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/hooks/use-theme";
 import { useEffect, useState, useCallback, useRef, type ReactNode } from "react";
 import { clsx } from "clsx";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useAuth } from "@/hooks/use-auth";
+
+interface HomeProject {
+  id: string;
+  title: string;
+  tagline: string;
+  description: string;
+  href: string;
+  icon: string;
+  gradient: string;
+}
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
@@ -15,7 +26,27 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [productsOpen, setProductsOpen] = useState(false);
+  const [products, setProducts] = useState<HomeProject[]>([]);
+  const productsRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+
+  useEffect(() => {
+    fetch("/api/homepage")
+      .then((r) => r.ok ? r.json() : { projects: [] })
+      .then((d) => setProducts(d.projects ?? []))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (productsRef.current && !productsRef.current.contains(e.target as Node)) {
+        setProductsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -32,19 +63,24 @@ export default function Navbar() {
   useEffect(() => {
     setMobileMenuOpen(false);
     setSearchOpen(false);
+    setProductsOpen(false);
   }, [pathname]);
 
   const isDocsPage = pathname !== "/";
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg">
+      <header
+        className="sticky top-0 z-50 w-full border-b border-[var(--border-color)]"
+        style={{ background: "var(--glass-bg)", backdropFilter: "blur(12px)" }}
+      >
         <div className="flex items-center justify-between h-14 px-4 lg:px-6 max-w-[1400px] mx-auto">
           <div className="flex items-center gap-3">
             {isDocsPage && (
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-1.5 -ml-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+                className="lg:hidden p-1.5 -ml-1.5"
+                style={{ color: "var(--text-secondary)" }}
                 aria-label="Toggle menu"
               >
                 {mobileMenuOpen ? (
@@ -59,21 +95,83 @@ export default function Navbar() {
             </Link>
           </div>
 
+          <div className="hidden lg:flex items-center ml-6">
+              <div ref={productsRef} className="relative">
+                <button
+                  onClick={() => setProductsOpen(!productsOpen)}
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium transition-colors rounded-lg"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Products
+                  <ChevronDown className={`w-3 h-3 transition-transform ${productsOpen ? "rotate-180" : ""}`} />
+                </button>
+                <AnimatePresence>
+                  {productsOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute left-0 top-full mt-1 w-[420px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden"
+                    >
+                      {products.length === 0 ? (
+                        <div className="px-4 py-6 text-xs text-slate-400 dark:text-slate-500 text-center">
+                          No products available
+                        </div>
+                      ) : (
+                        products.map((p) => (
+                          <a
+                            key={p.id}
+                            href={p.href}
+                            onClick={() => setProductsOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+                          >
+                            <div className="flex-1 min-w-0">
+                              <span className="text-sm font-medium text-slate-900 dark:text-white group-hover:text-violet-500 transition-colors">
+                                {p.title}
+                              </span>
+                              <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
+                                {p.tagline}
+                              </p>
+                            </div>
+                            <ExternalLink className="w-3 h-3 text-slate-300 dark:text-slate-600 group-hover:text-violet-500 transition-colors shrink-0" />
+                          </a>
+                        ))
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+
           <div className="flex items-center gap-1.5">
             <button
+              onClick={() => setProductsOpen(!productsOpen)}
+              className="lg:hidden p-1.5 text-xs font-medium transition-colors"
+              style={{ color: "var(--text-secondary)" }}
+              aria-label="Products"
+            >
+              Products
+            </button>
+
+            <button
               onClick={() => setSearchOpen(true)}
-              className="hidden md:flex items-center gap-2 px-3 py-1.5 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors min-w-[180px]"
+              className="hidden md:flex items-center gap-2 px-3 py-1.5 text-xs rounded-lg border transition-colors min-w-[180px]"
+              style={{ color: "var(--text-tertiary)", background: "var(--input-bg)", borderColor: "var(--border-color)" }}
             >
               <Search className="w-3.5 h-3.5" />
               <span>Search docs...</span>
-              <kbd className="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 font-mono">
+              <kbd className="ml-auto text-[10px] px-1.5 py-0.5 rounded font-mono"
+                style={{ background: "var(--border-color)", color: "var(--text-tertiary)" }}
+              >
                 ⌘K
               </kbd>
             </button>
 
             <button
               onClick={() => setSearchOpen(true)}
-              className="md:hidden p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+              className="md:hidden p-1.5 transition-colors"
+              style={{ color: "var(--text-secondary)" }}
               aria-label="Search"
             >
               <Search className="w-4 h-4" />
@@ -81,7 +179,8 @@ export default function Navbar() {
 
             <button
               onClick={toggleTheme}
-              className="p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+              className="p-1.5 transition-colors"
+              style={{ color: "var(--text-secondary)" }}
               aria-label="Toggle theme"
             >
               {theme === "dark" ? (
@@ -95,11 +194,12 @@ export default function Navbar() {
               href={user ? "/admin" : "/login"}
               className={`p-1.5 transition-colors ${
                 loading
-                  ? "text-slate-300 dark:text-slate-600"
+                  ? "opacity-40"
                   : user
-                    ? "text-aurora-500 hover:text-aurora-600"
-                    : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                    ? "text-violet-500 hover:text-violet-600"
+                    : ""
               }`}
+              style={{ color: loading ? undefined : user ? undefined : "var(--text-secondary)" }}
               aria-label={user ? "Admin" : "Sign in"}
             >
               <svg
@@ -120,7 +220,8 @@ export default function Navbar() {
               href="https://github.com/Techhackontime999"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+              className="p-1.5 transition-colors"
+              style={{ color: "var(--text-tertiary)" }}
               aria-label="GitHub"
             >
               <svg
@@ -134,6 +235,47 @@ export default function Navbar() {
           </div>
         </div>
       </header>
+
+      {productsOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/20 dark:bg-black/50 backdrop-blur-sm lg:hidden"
+          onClick={() => setProductsOpen(false)}
+        />
+      )}
+
+      <AnimatePresence>
+        {productsOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.15 }}
+            className="fixed left-0 right-0 top-14 z-50 lg:hidden bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shadow-xl max-h-[60vh] overflow-y-auto"
+          >
+            {products.length === 0 ? (
+              <div className="px-4 py-6 text-xs text-slate-400 dark:text-slate-500 text-center">
+                No products available
+              </div>
+            ) : (
+              products.map((p) => (
+                <a
+                  key={p.id}
+                  href={p.href}
+                  onClick={() => setProductsOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                >
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-medium text-slate-900 dark:text-white">
+                      {p.title}
+                    </span>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{p.tagline}</p>
+                  </div>
+                </a>
+              ))
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {mobileMenuOpen && isDocsPage && (
         <div
@@ -155,7 +297,6 @@ export default function Navbar() {
   );
 }
 
-// Import Sidebar dynamically to avoid circular dependency
 import Sidebar from "./Sidebar";
 
 interface SearchItem {

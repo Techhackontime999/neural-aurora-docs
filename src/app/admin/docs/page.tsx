@@ -77,7 +77,7 @@ export default function AdminDocsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>
           Doc Pages
         </h1>
         <Link
@@ -99,7 +99,7 @@ export default function AdminDocsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-3 mb-4 px-4 py-2.5 rounded-lg bg-aurora-50 dark:bg-aurora-950/20 border border-aurora-200 dark:border-aurora-900"
         >
-          <span className="text-sm text-aurora-700 dark:text-aurora-300 font-medium">
+          <span className="text-sm font-medium" style={{ color: "var(--accent-glow)" }}>
             {selected.size} selected
           </span>
           <button
@@ -112,7 +112,7 @@ export default function AdminDocsPage() {
           </button>
           <button
             onClick={clearSelection}
-            className="px-3 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]"
+            className="px-3 py-1.5 rounded-md text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]" style={{ border: "1px solid var(--border-color)", color: "var(--text-secondary)" }}
           >
             Clear Selection
           </button>
@@ -120,11 +120,11 @@ export default function AdminDocsPage() {
       )}
 
       {loading ? (
-        <div className="text-center py-12 text-sm text-slate-400">Loading...</div>
+        <div className="text-center py-12 text-sm" style={{ color: "var(--text-tertiary)" }}>Loading...</div>
       ) : error ? (
         <div className="text-center py-12 text-sm text-red-500">{error}</div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-12 text-sm text-slate-400">
+        <div className="text-center py-12 text-sm" style={{ color: "var(--text-tertiary)" }}>
           {search ? "No pages match your search." : "No pages yet. Create your first doc page."}
         </div>
       ) : (
@@ -132,11 +132,11 @@ export default function AdminDocsPage() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800"
+          className="overflow-x-auto rounded-xl" style={{ border: "1px solid var(--border-color)" }}
         >
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+              <tr style={{ background: "var(--bg-secondary)", borderBottom: "1px solid var(--border-color)" }}>
                 <th className="w-10 px-2 py-3">
                   <input
                     type="checkbox"
@@ -145,11 +145,11 @@ export default function AdminDocsPage() {
                     className="rounded border-slate-300 dark:border-slate-600 text-aurora-500 focus:ring-aurora-500"
                   />
                 </th>
-                <th className="text-left px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Title</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Category</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Slug</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Status</th>
-                <th className="text-right px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Actions</th>
+                <th className="text-left px-4 py-3 font-medium" style={{ color: "var(--text-secondary)" }}>Title</th>
+                <th className="text-left px-4 py-3 font-medium" style={{ color: "var(--text-secondary)" }}>Category</th>
+                <th className="text-left px-4 py-3 font-medium" style={{ color: "var(--text-secondary)" }}>Slug</th>
+                <th className="text-left px-4 py-3 font-medium" style={{ color: "var(--text-secondary)" }}>Status</th>
+                <th className="text-right px-4 py-3 font-medium" style={{ color: "var(--text-secondary)" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -158,11 +158,11 @@ export default function AdminDocsPage() {
                   key={page.id}
                   variants={itemVariants}
                   layout
-                  className={`border-b border-slate-100 dark:border-slate-800 last:border-0 transition-colors ${
+                  className={`last:border-0 transition-colors ${
                     selected.has(page.id)
                       ? "bg-aurora-50/50 dark:bg-aurora-950/10"
                       : "hover:bg-slate-50 dark:hover:bg-slate-900/50"
-                  }`}
+                  }`} style={{ borderBottom: "1px solid var(--border-color)" }}
                 >
                   <td className="px-2 py-3">
                     <input
@@ -172,9 +172,9 @@ export default function AdminDocsPage() {
                       className="rounded border-slate-300 dark:border-slate-600 text-aurora-500 focus:ring-aurora-500"
                     />
                   </td>
-                  <td className="px-4 py-3 text-slate-900 dark:text-white font-medium">{page.title}</td>
-                  <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{page.category?.name ?? "—"}</td>
-                  <td className="px-4 py-3 text-slate-500 dark:text-slate-400 font-mono text-xs">{page.slug}</td>
+                  <td className="px-4 py-3 font-medium" style={{ color: "var(--text-primary)" }}>{page.title}</td>
+                  <td className="px-4 py-3" style={{ color: "var(--text-secondary)" }}>{page.category?.name ?? "—"}</td>
+                  <td className="px-4 py-3 font-mono text-xs" style={{ color: "var(--text-secondary)" }}>{page.slug}</td>
                   <td className="px-4 py-3">
                     <span
                       className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -190,13 +190,13 @@ export default function AdminDocsPage() {
                     <div className="flex items-center justify-end gap-1">
                       <Link
                         href={`/admin/docs/${page.id}/edit`}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        className="p-1.5 rounded-lg hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" style={{ color: "var(--text-tertiary)" }}
                       >
                         <Edit className="w-4 h-4" />
                       </Link>
                       <button
                         onClick={() => handleSingleDelete(page.id)}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                        className="p-1.5 rounded-lg hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors" style={{ color: "var(--text-tertiary)" }}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

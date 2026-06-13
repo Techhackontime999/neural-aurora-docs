@@ -116,33 +116,33 @@ export default function AdminReleaseNotesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">
+      <h1 className="text-2xl font-bold tracking-tight mb-6" style={{ color: "var(--text-primary)" }}>
         Release Notes
       </h1>
 
-      <form onSubmit={handleSubmit} className="p-4 mb-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-4">
+      <form onSubmit={handleSubmit} className="p-4 mb-6 rounded-xl space-y-4" style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title *</label>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Title *</label>
+            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Version *</label>
-            <input type="text" value={version} onChange={(e) => setVersion(e.target.value)} placeholder="v2.3.0" required className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Version *</label>
+            <input type="text" value={version} onChange={(e) => setVersion(e.target.value)} placeholder="v2.3.0" required className="w-full px-3 py-2 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Project Type</label>
-            <select value={projectType} onChange={(e) => setProjectType(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500">
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Project Type</label>
+            <select value={projectType} onChange={(e) => setProjectType(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}>
               <option value="neural-aurora">NEURAL AURORA</option>
               <option value="wacrm">Neural Aurora CRM</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Published At</label>
-            <input type="date" value={publishedAt} onChange={(e) => setPublishedAt(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Published At</label>
+            <input type="date" value={publishedAt} onChange={(e) => setPublishedAt(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
           </div>
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Content</label>
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Content</label>
             <RichTextEditor value={content} onChange={setContent} placeholder="Write release notes..." />
           </div>
         </div>
@@ -151,7 +151,7 @@ export default function AdminReleaseNotesPage() {
             {editId ? "Update" : "Create"} Release
           </button>
           {editId && (
-            <button type="button" onClick={() => { setEditId(null); setTitle(""); setVersion(""); setContent(""); setPublishedAt(""); }} className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]">
+            <button type="button" onClick={() => { setEditId(null); setTitle(""); setVersion(""); setContent(""); setPublishedAt(""); }} className="px-4 py-2 rounded-lg text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]" style={{ border: "1px solid var(--border-color)", color: "var(--text-secondary)" }}>
               Cancel
             </button>
           )}
@@ -168,7 +168,7 @@ export default function AdminReleaseNotesPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-3 mb-4 px-4 py-2.5 rounded-lg bg-aurora-50 dark:bg-aurora-950/20 border border-aurora-200 dark:border-aurora-900"
         >
-          <span className="text-sm text-aurora-700 dark:text-aurora-300 font-medium">
+          <span className="text-sm font-medium" style={{ color: "var(--accent-glow)" }}>
             {selected.size} selected
           </span>
           <button
@@ -181,7 +181,7 @@ export default function AdminReleaseNotesPage() {
           </button>
           <button
             onClick={clearSelection}
-            className="px-3 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]"
+            className="px-3 py-1.5 rounded-md text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]" style={{ border: "1px solid var(--border-color)", color: "var(--text-secondary)" }}
           >
             Clear Selection
           </button>
@@ -189,9 +189,9 @@ export default function AdminReleaseNotesPage() {
       )}
 
       {loading ? (
-        <div className="text-center py-12 text-sm text-slate-400">Loading...</div>
+        <div className="text-center py-12 text-sm" style={{ color: "var(--text-tertiary)" }}>Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-12 text-sm text-slate-400">
+        <div className="text-center py-12 text-sm" style={{ color: "var(--text-tertiary)" }}>
           {search ? "No release notes match your search." : "No release notes yet."}
         </div>
       ) : (
@@ -206,9 +206,9 @@ export default function AdminReleaseNotesPage() {
               key={r.id}
               variants={itemVariants}
               layout
-              className={`p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between ${
+              className={`p-4 rounded-xl flex items-center justify-between ${
                 selected.has(r.id) ? "ring-2 ring-aurora-500/30" : ""
-              }`}
+              }`} style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <input
@@ -218,21 +218,21 @@ export default function AdminReleaseNotesPage() {
                   className="rounded border-slate-300 dark:border-slate-600 text-aurora-500 focus:ring-aurora-500 shrink-0"
                 />
                 <div>
-                  <p className="text-sm font-medium text-slate-900 dark:text-white">{r.title}</p>
+                  <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{r.title}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs font-mono text-aurora-600 dark:text-aurora-400 font-medium">{r.version}</span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 uppercase font-medium">{r.project_type}</span>
+                    <span className="text-xs font-mono font-medium" style={{ color: "var(--accent-glow)" }}>{r.version}</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded uppercase font-medium" style={{ background: "var(--bg-secondary)", color: "var(--text-secondary)" }}>{r.project_type}</span>
                     {r.published_at && (
-                      <span className="text-xs text-slate-400">{new Date(r.published_at).toLocaleDateString()}</span>
+                      <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>{new Date(r.published_at).toLocaleDateString()}</span>
                     )}
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <button onClick={() => handleEdit(r)} className="p-1.5 rounded-lg text-slate-400 hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <button onClick={() => handleEdit(r)} className="p-1.5 rounded-lg hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" style={{ color: "var(--text-tertiary)" }}>
                   <Edit className="w-4 h-4" />
                 </button>
-                <button onClick={() => handleSingleDelete(r.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
+                <button onClick={() => handleSingleDelete(r.id)} className="p-1.5 rounded-lg hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors" style={{ color: "var(--text-tertiary)" }}>
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>

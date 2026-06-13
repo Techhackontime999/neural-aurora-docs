@@ -147,18 +147,25 @@ export default function DocsPage() {
                     <Link
                       key={page.slug}
                       href={`/${category.slug}/${page.slug}`}
-                      className="group flex items-start gap-3 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-aurora-200 dark:hover:border-aurora-800 hover:bg-aurora-50/50 dark:hover:bg-aurora-950/20 transition-all duration-200"
+                      className="group flex items-start gap-3 px-4 py-3 rounded-xl transition-all duration-200"
+                      style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}
                     >
-                      <FileText className="w-4 h-4 text-slate-400 group-hover:text-aurora-500 mt-0.5 shrink-0 transition-colors" />
+                      <FileText className="w-4 h-4 mt-0.5 shrink-0 transition-colors"
+                        style={{ color: "var(--text-tertiary)" }}
+                      />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-slate-900 dark:text-white group-hover:text-aurora-700 dark:group-hover:text-aurora-300 transition-colors">
+                          <span className="text-sm font-medium transition-colors"
+                            style={{ color: "var(--text-primary)" }}
+                          >
                             {page.title}
                           </span>
-                          <ChevronRight className="w-3 h-3 text-slate-400 group-hover:text-aurora-500 transition-colors shrink-0" />
+                          <ChevronRight className="w-3 h-3 shrink-0 transition-colors"
+                            style={{ color: "var(--text-tertiary)" }}
+                          />
                         </div>
                         {page.excerpt && (
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
+                          <p className="text-xs mt-0.5 line-clamp-1" style={{ color: "var(--text-secondary)" }}>
                             {page.excerpt}
                           </p>
                         )}
@@ -172,10 +179,11 @@ export default function DocsPage() {
         </div>
       )}
 
-      <motion.div variants={fadeUp} className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
+      <motion.div variants={fadeUp} className="mt-12 pt-8" style={{ borderTop: "1px solid var(--border-color)" }}>
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm text-aurora-600 dark:text-aurora-400 hover:underline font-medium"
+          className="inline-flex items-center gap-1.5 text-sm font-medium hover:underline"
+          style={{ color: "var(--accent-glow)" }}
         >
           &larr; Back to home
         </Link>

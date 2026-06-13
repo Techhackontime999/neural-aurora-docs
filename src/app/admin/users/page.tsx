@@ -131,16 +131,16 @@ export default function AdminUsersPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>
             Users
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
             Approve, revoke, or delete user accounts
           </p>
         </div>
         <button
           onClick={fetchUsers}
-          className="p-2 rounded-lg text-slate-400 hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="p-2 rounded-lg hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" style={{ color: "var(--text-tertiary)" }}
           title="Refresh"
         >
           <RefreshCw className="w-4 h-4" />
@@ -151,7 +151,7 @@ export default function AdminUsersPage() {
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-3 mb-4 rounded-xl bg-red-50/80 dark:bg-red-950/30 border border-red-200/60 dark:border-red-800/60 text-sm text-red-600 dark:text-red-400 backdrop-blur-sm"
+          className="p-3 mb-4 rounded-xl bg-red-50/80 dark:bg-red-950/30 border border-red-200/60 dark:border-red-800/60 text-sm backdrop-blur-sm" style={{ color: "var(--accent-glow)" }}
         >
           {error}
         </motion.div>
@@ -167,7 +167,7 @@ export default function AdminUsersPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-3 mb-4 px-4 py-2.5 rounded-lg bg-aurora-50 dark:bg-aurora-950/20 border border-aurora-200 dark:border-aurora-900"
         >
-          <span className="text-sm text-aurora-700 dark:text-aurora-300 font-medium">
+          <span className="text-sm font-medium" style={{ color: "var(--accent-glow)" }}>
             {selected.size} selected
           </span>
           <button
@@ -180,7 +180,7 @@ export default function AdminUsersPage() {
           </button>
           <button
             onClick={clearSelection}
-            className="px-3 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]"
+            className="px-3 py-1.5 rounded-md text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]" style={{ border: "1px solid var(--border-color)", color: "var(--text-secondary)" }}
           >
             Clear Selection
           </button>
@@ -188,9 +188,9 @@ export default function AdminUsersPage() {
       )}
 
       {loading ? (
-        <div className="text-center py-12 text-sm text-slate-400">Loading...</div>
+        <div className="text-center py-12 text-sm" style={{ color: "var(--text-tertiary)" }}>Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-12 text-sm text-slate-400">
+        <div className="text-center py-12 text-sm" style={{ color: "var(--text-tertiary)" }}>
           {search ? "No users match your search." : "No users found."}
         </div>
       ) : (
@@ -198,11 +198,11 @@ export default function AdminUsersPage() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800"
+          className="overflow-hidden rounded-2xl" style={{ border: "1px solid var(--border-color)" }}
         >
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+              <tr style={{ background: "var(--bg-secondary)", borderBottom: "1px solid var(--border-color)" }}>
                 <th className="w-10 px-2 py-3">
                   <input
                     type="checkbox"
@@ -211,11 +211,11 @@ export default function AdminUsersPage() {
                     className="rounded border-slate-300 dark:border-slate-600 text-aurora-500 focus:ring-aurora-500"
                   />
                 </th>
-                <th className="text-left px-4 py-3 font-medium text-slate-500 dark:text-slate-400">User</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-500 dark:text-slate-400 hidden sm:table-cell">Joined</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Role</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Status</th>
-                <th className="text-right px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Actions</th>
+                <th className="text-left px-4 py-3 font-medium" style={{ color: "var(--text-secondary)" }}>User</th>
+                <th className="text-left px-4 py-3 font-medium hidden sm:table-cell" style={{ color: "var(--text-secondary)" }}>Joined</th>
+                <th className="text-left px-4 py-3 font-medium" style={{ color: "var(--text-secondary)" }}>Role</th>
+                <th className="text-left px-4 py-3 font-medium" style={{ color: "var(--text-secondary)" }}>Status</th>
+                <th className="text-right px-4 py-3 font-medium" style={{ color: "var(--text-secondary)" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -224,11 +224,11 @@ export default function AdminUsersPage() {
                   key={u.id}
                   variants={itemVariants}
                   layout
-                  className={`border-b border-slate-100 dark:border-slate-800 last:border-0 transition-colors ${
+                  className={`last:border-0 transition-colors ${
                     selected.has(u.id)
                       ? "bg-aurora-50/50 dark:bg-aurora-950/10"
                       : "hover:bg-slate-50 dark:hover:bg-slate-900/50"
-                  }`}
+                  }`} style={{ borderBottom: "1px solid var(--border-color)" }}
                 >
                   <td className="px-2 py-3">
                     <input
@@ -244,19 +244,19 @@ export default function AdminUsersPage() {
                         {getInitials(u.full_name || u.email)}
                       </div>
                       <div>
-                        <div className="flex items-center gap-1.5 text-slate-900 dark:text-white font-medium">
+                        <div className="flex items-center gap-1.5 font-medium" style={{ color: "var(--text-primary)" }}>
                           {u.role === "admin" && <Shield className="w-3 h-3 text-amber-500" />}
                           {u.full_name}
                         </div>
-                        <div className="text-xs text-slate-400 dark:text-slate-500">{u.email}</div>
+                        <div className="text-xs" style={{ color: "var(--text-tertiary)" }}>{u.email}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-slate-500 dark:text-slate-400 hidden sm:table-cell">
+                  <td className="px-4 py-3 hidden sm:table-cell" style={{ color: "var(--text-secondary)" }}>
                     {formatDate(u.created_at)}
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">
+                    <span className="text-xs font-medium uppercase" style={{ color: "var(--text-secondary)" }}>
                       {u.role}
                     </span>
                   </td>
@@ -280,8 +280,9 @@ export default function AdminUsersPage() {
                           <button
                             onClick={() => handleAction(u.user_id, "approve")}
                             disabled={actionLoading === u.user_id}
-                            className={`${btnClass(actionLoading === u.user_id)} text-green-600 hover:bg-green-50 dark:hover:bg-green-950/30`}
+                            className={`${btnClass(actionLoading === u.user_id)} hover:bg-green-50 dark:hover:bg-green-950/30`}
                             title="Approve"
+                            style={{ color: "var(--accent-glow)" }}
                           >
                             <Check className="w-4 h-4" />
                           </button>
@@ -289,7 +290,8 @@ export default function AdminUsersPage() {
                           <button
                             onClick={() => handleAction(u.user_id, "reject")}
                             disabled={actionLoading === u.user_id}
-                            className={`${btnClass(actionLoading === u.user_id)} text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/30`}
+                            className={`${btnClass(actionLoading === u.user_id)} hover:bg-amber-50 dark:hover:bg-amber-950/30`}
+                            style={{ color: "var(--accent-glow)" }}
                             title="Revoke approval"
                           >
                             <X className="w-4 h-4" />
@@ -298,7 +300,8 @@ export default function AdminUsersPage() {
                         <button
                           onClick={() => handleAction(u.user_id, "delete")}
                           disabled={actionLoading === u.user_id}
-                          className={`${btnClass(actionLoading === u.user_id)} text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30`}
+                          className={`${btnClass(actionLoading === u.user_id)} hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30`}
+                          style={{ color: "var(--text-tertiary)" }}
                           title="Delete user"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -306,7 +309,7 @@ export default function AdminUsersPage() {
                       </div>
                     )}
                     {u.role === "admin" && (
-                      <span className="text-xs text-slate-400 dark:text-slate-600">—</span>
+                      <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>—</span>
                     )}
                   </td>
                 </motion.tr>

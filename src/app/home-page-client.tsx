@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import {
   BookOpen,
   MessageSquare,
@@ -14,14 +14,20 @@ import {
   Palette,
   Rocket,
   Search,
+  ChevronDown,
   ChevronRight,
   ExternalLink,
   PlayCircle,
   Film,
+  Sun,
+  Moon,
 } from "lucide-react";
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { useTheme } from "@/hooks/use-theme";
+import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
+import { BrandLogo } from "@/components/BrandLogo";
 
 const Background3D = dynamic(() => import("@/components/Background3D"), { ssr: false, loading: () => null });
 
@@ -59,9 +65,9 @@ const FEATURE_ICON_MAP: Record<string, ReactNode> = {
   search: <Search className="w-5 h-5" />,
 };
 
-function GithubIcon({ className }: { className?: string }) {
+function GithubIcon({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
       <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
     </svg>
   );
@@ -120,26 +126,22 @@ function ScrollStagger({ children, className }: { children: ReactNode; className
   );
 }
 
-function useScrollProgress() {
-  const [progress, setProgress] = useState(0);
+function ScrollProgressBar() {
+  const progress = useMotionValue(0);
   useEffect(() => {
     const handle = () => {
       const scrollTop = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(docHeight ? Math.min(scrollTop / docHeight, 1) : 0);
+      progress.set(docHeight ? Math.min(scrollTop / docHeight, 1) : 0);
     };
     window.addEventListener("scroll", handle, { passive: true });
     return () => window.removeEventListener("scroll", handle);
-  }, []);
-  return progress;
-}
-
-function ScrollProgressBar() {
-  const progress = useScrollProgress();
+  }, [progress]);
+  const scaleX = useSpring(progress, { stiffness: 100, damping: 20 });
   return (
     <motion.div
-      className="fixed top-0 left-0 right-0 z-[60] h-[2px] bg-gradient-to-r from-violet-500 via-purple-500 to-teal-500 origin-left"
-      style={{ scaleX: progress }}
+      className="fixed top-0 left-0 right-0 z-[60] h-[2px] origin-left"
+      style={{ scaleX, background: "var(--brand-gradient)" }}
     />
   );
 }
@@ -203,34 +205,22 @@ function FloatingOrbs() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
       <motion.div
-        className="absolute -top-32 -right-32 w-96 h-96 bg-violet-600/15 rounded-full blur-[120px]"
-        style={{ y: parallax1 }}
-        animate={{
-          x: [0, 15, -10, 0],
-        }}
-        transition={{
-          x: { duration: 20, repeat: Infinity, ease: "linear" },
-        }}
+        className="absolute -top-32 -right-32 w-96 h-96 rounded-full blur-[120px]"
+        style={{ background: "rgba(139, 92, 246, 0.12)", y: parallax1 }}
+        animate={{ x: [0, 15, -10, 0] }}
+        transition={{ x: { duration: 20, repeat: Infinity, ease: "linear" } }}
       />
       <motion.div
-        className="absolute top-1/3 -left-32 w-80 h-80 bg-blue-600/10 rounded-full blur-[100px]"
-        style={{ y: parallax2 }}
-        animate={{
-          x: [0, -15, 10, 0],
-        }}
-        transition={{
-          x: { duration: 25, repeat: Infinity, ease: "linear" },
-        }}
+        className="absolute top-1/3 -left-32 w-80 h-80 rounded-full blur-[100px]"
+        style={{ background: "rgba(45, 212, 191, 0.08)", y: parallax2 }}
+        animate={{ x: [0, -15, 10, 0] }}
+        transition={{ x: { duration: 25, repeat: Infinity, ease: "linear" } }}
       />
       <motion.div
-        className="absolute bottom-0 right-1/4 w-64 h-64 bg-fuchsia-600/8 rounded-full blur-[80px]"
-        style={{ y: parallax3 }}
-        animate={{
-          x: [0, 10, -5, 0],
-        }}
-        transition={{
-          x: { duration: 18, repeat: Infinity, ease: "linear" },
-        }}
+        className="absolute bottom-0 right-1/4 w-64 h-64 rounded-full blur-[80px]"
+        style={{ background: "rgba(168, 85, 247, 0.06)", y: parallax3 }}
+        animate={{ x: [0, 10, -5, 0] }}
+        transition={{ x: { duration: 18, repeat: Infinity, ease: "linear" } }}
       />
     </div>
   );
@@ -259,7 +249,7 @@ function DemoSection({ initialDemos }: { initialDemos: Demo[] }) {
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
             See It In Action
           </h2>
-          <p className="text-sm text-slate-400 max-w-xl mx-auto">
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
             Watch full demos of every project in the ecosystem.
           </p>
         </ScrollReveal>
@@ -267,27 +257,34 @@ function DemoSection({ initialDemos }: { initialDemos: Demo[] }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {demos.map((demo) => (
             <motion.div key={demo.id} variants={fadeUp}>
-              <div className="group relative overflow-hidden rounded-2xl border border-white/5 bg-white/[0.03] transition-all duration-300 hover:bg-white/[0.06] hover:border-violet-500/20">
+              <div className="group relative overflow-hidden rounded-2xl transition-all duration-300"
+                style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}
+              >
                 <div className="p-6 lg:p-8">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400">
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center"
+                      style={{ background: "var(--eyebrow-bg)", color: "var(--accent-glow)" }}
+                    >
                       <Film className="w-4 h-4" />
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-white">{demo.title}</h3>
-                      <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${demo.project_type === "both" ? "bg-purple-500/10 text-purple-300" : demo.project_type === "neural-aurora" ? "bg-violet-500/10 text-violet-300" : "bg-cyan-500/10 text-cyan-300"}`}>
+                      <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${demo.project_type === "both" ? "text-purple-300" : demo.project_type === "neural-aurora" ? "text-violet-300" : "text-cyan-300"}`}
+                        style={{ background: demo.project_type === "both" ? "rgba(168,85,247,0.1)" : demo.project_type === "neural-aurora" ? "rgba(139,92,246,0.1)" : "rgba(45,212,191,0.1)" }}
+                      >
                         {demo.project_type === "neural-aurora" ? "NEURAL AURORA" : demo.project_type === "wacrm" ? "Neural Aurora CRM" : "Ecosystem"}
                       </span>
                     </div>
                   </div>
                   {demo.description && (
-                    <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                    <p className="text-xs leading-relaxed mb-4" style={{ color: "var(--text-secondary)" }}>
                       {demo.description}
                     </p>
                   )}
                   <button
                     onClick={() => setActiveDemo(activeDemo === demo.id ? null : demo.id)}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white text-xs font-medium border border-white/10 transition-all duration-200 active:scale-[0.98]"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all duration-200 active:scale-[0.98] text-white"
+                    style={{ background: "var(--card-bg)", border: "1px solid var(--border-color)" }}
                   >
                     <PlayCircle className="w-4 h-4" />
                     {activeDemo === demo.id ? "Hide Demo" : "Show Full Demo"}
@@ -298,7 +295,8 @@ function DemoSection({ initialDemos }: { initialDemos: Demo[] }) {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                    className="border-t border-white/5 overflow-hidden"
+                    className="overflow-hidden"
+                    style={{ borderTop: "1px solid var(--border-color)" }}
                   >
                     <div className="p-6 lg:p-8">
                       {demo.embed_url ? (
@@ -316,14 +314,17 @@ function DemoSection({ initialDemos }: { initialDemos: Demo[] }) {
                           href={demo.video_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 w-full py-12 rounded-xl border border-dashed border-white/10 bg-white/[0.02] text-slate-400 hover:text-violet-400 hover:border-violet-500/30 transition-colors"
+                          className="flex items-center justify-center gap-2 w-full py-12 rounded-xl border border-dashed transition-colors"
+                          style={{ borderColor: "var(--border-color)", background: "var(--card-bg)", color: "var(--text-secondary)" }}
                         >
                           <PlayCircle className="w-8 h-8" />
                           <span className="text-sm font-medium">Watch on YouTube</span>
                         </a>
                       ) : (
-                        <div className="flex items-center justify-center py-12 rounded-xl border border-dashed border-white/10 bg-white/[0.02] text-slate-500 text-xs">
-                          No video URL configured. Add one in the admin panel.
+                        <div className="flex items-center justify-center py-12 rounded-xl border border-dashed"
+                          style={{ borderColor: "var(--border-color)", background: "var(--card-bg)", color: "var(--text-tertiary)" }}
+                        >
+                          <span className="text-xs">No video URL configured. Add one in the admin panel.</span>
                         </div>
                       )}
                     </div>
@@ -347,8 +348,24 @@ export default function HomePageClient({
   initialDemos: Demo[];
 }) {
   const { user, loading } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [data, setData] = useState<HomepageData>(initialData);
+  const [productsOpen, setProductsOpen] = useState(false);
+  const productsRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (productsRef.current && !productsRef.current.contains(e.target as Node)) {
+        setProductsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  useEffect(() => { setProductsOpen(false); }, [pathname]);
 
   return (
     <>
@@ -357,39 +374,88 @@ export default function HomePageClient({
       <FloatingOrbs />
 
       {/* Navbar */}
-      <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 w-full"
+        style={{ borderBottom: "1px solid var(--border-color)", background: "var(--bg-primary)", backdropFilter: "blur(12px)" }}
+      >
         <div className="flex items-center justify-between h-14 px-4 lg:px-6 max-w-[1400px] mx-auto">
           <Link href="/" className="flex items-center gap-2">
-            <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="28" stroke="#8b5cf6" strokeOpacity="0.3" strokeWidth="1" strokeDasharray="5 5" />
-              <circle cx="50" cy="50" r="18" stroke="#8b5cf6" strokeOpacity="0.1" strokeWidth="1" />
-              <circle cx="50" cy="50" r="10" fill="#8b5cf6" fillOpacity="0.35" />
-              <circle cx="50" cy="50" r="5.5" fill="#a78bfa" fillOpacity="0.9" />
-              <circle cx="48.5" cy="48.5" r="2" fill="white" fillOpacity="0.5" />
-            </svg>
-            <span className="text-sm font-bold tracking-tight bg-gradient-to-r from-violet-400 to-purple-300 bg-clip-text text-transparent">
-              NEURAL
-            </span>
-            <span className="text-[10px] font-light tracking-[0.15em] text-teal-400 -ml-0.5">
-              AURORA
-            </span>
+            <BrandLogo size="small" showWordmark={true} />
           </Link>
           <div className="flex items-center gap-3">
+            <div ref={productsRef} className="relative">
+              <button
+                onClick={() => setProductsOpen(!productsOpen)}
+                className="text-xs transition-colors flex items-center gap-1"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                Products
+                <ChevronDown className={`w-3 h-3 transition-transform ${productsOpen ? "rotate-180" : ""}`} />
+              </button>
+              <AnimatePresence>
+                {productsOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden"
+                  >
+                    {data.projects.length === 0 ? (
+                      <div className="px-4 py-6 text-xs text-slate-400 dark:text-slate-500 text-center">
+                        No products available
+                      </div>
+                    ) : (
+                      data.projects.map((p) => (
+                        <a
+                          key={p.id}
+                          href={p.href}
+                          onClick={() => setProductsOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <span className="text-sm font-medium text-slate-900 dark:text-white group-hover:text-violet-500 transition-colors">
+                              {p.title}
+                            </span>
+                            <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
+                              {p.tagline}
+                            </p>
+                          </div>
+                        </a>
+                      ))
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             <Link
               href="/docs"
-              className="text-xs text-slate-400 hover:text-white transition-colors"
+              className="text-xs transition-colors"
+              style={{ color: "var(--text-secondary)" }}
             >
               Docs
             </Link>
+            <button
+              onClick={toggleTheme}
+              className="p-1.5 transition-colors"
+              style={{ color: "var(--text-tertiary)" }}
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4" />
+              ) : (
+                <Moon className="w-4 h-4" />
+              )}
+            </button>
             <Link
               href={user ? "/admin" : "/login"}
               className={`p-1.5 transition-colors ${
                 loading
-                  ? "text-slate-600"
+                  ? "opacity-40"
                   : user
                     ? "text-violet-400 hover:text-violet-300"
-                    : "text-slate-400 hover:text-white"
+                    : ""
               }`}
+              style={{ color: loading ? undefined : user ? undefined : "var(--text-secondary)" }}
               aria-label={user ? "Admin" : "Sign in"}
             >
               <svg
@@ -409,7 +475,8 @@ export default function HomePageClient({
               href="https://github.com/Techhackontime999"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="transition-colors"
+              style={{ color: "var(--text-tertiary)" }}
             >
               <GithubIcon className="w-4 h-4" />
             </a>
@@ -421,7 +488,9 @@ export default function HomePageClient({
       <section className="relative pt-20 pb-16 lg:pt-28 lg:pb-20 px-4 overflow-hidden">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <motion.div variants={fadeUp} initial="initial" animate="animate">
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 text-[11px] font-medium rounded-full bg-violet-500/10 text-violet-300 border border-violet-500/20">
+            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 text-[11px] font-medium rounded-full"
+              style={{ background: "var(--eyebrow-bg)", color: "var(--eyebrow-text)", border: "1px solid var(--eyeborder-border)" }}
+            >
               <Sparkles className="w-3 h-3" />
               Ecosystem Documentation
             </div>
@@ -436,7 +505,9 @@ export default function HomePageClient({
               <span>Documentation</span>
             </h1>
 
-            <p className="text-base sm:text-lg text-slate-400 leading-relaxed max-w-[65ch] mb-8">
+            <p className="text-base sm:text-lg leading-relaxed max-w-[65ch] mb-8"
+              style={{ color: "var(--text-secondary)" }}
+            >
               Everything you need to integrate, customize, deploy, and scale
               Neural Aurora projects. Guides, APIs, SDKs, examples, tutorials,
               and AI-powered documentation in one place.
@@ -445,14 +516,16 @@ export default function HomePageClient({
             <div className="flex flex-col sm:flex-row items-start gap-3">
               <Link
                 href="/docs"
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-sm font-medium transition-all duration-300 active:scale-[0.98]"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-medium transition-all duration-300 active:scale-[0.98]"
+                style={{ background: "var(--brand-gradient-strong)" }}
               >
                 Get Started
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <Link
                 href="/neural-aurora/overview"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white text-sm font-medium border border-white/10 transition-all duration-200 active:scale-[0.98]"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-medium transition-all duration-200 active:scale-[0.98]"
+                style={{ background: "var(--card-bg)", border: "1px solid var(--border-color)" }}
               >
                 <BookOpen className="w-4 h-4" />
                 Browse Documentation
@@ -468,22 +541,29 @@ export default function HomePageClient({
           >
             <div className="relative w-80 h-80">
               <motion.div
-                className="absolute inset-0 rounded-full border border-violet-500/20"
+                className="absolute inset-0 rounded-full"
+                style={{ border: "1px solid rgba(139, 92, 246, 0.15)" }}
                 animate={{ rotate: 360 }}
                 transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
               />
               <motion.div
-                className="absolute inset-4 rounded-full border border-dashed border-violet-500/10"
+                className="absolute inset-4 rounded-full"
+                style={{ border: "1px dashed rgba(139, 92, 246, 0.1)" }}
                 animate={{ rotate: -360 }}
                 transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
               />
               <motion.div
-                className="absolute inset-12 rounded-full border border-violet-500/5"
+                className="absolute inset-12 rounded-full"
+                style={{ border: "1px solid rgba(45, 212, 191, 0.08)" }}
                 animate={{ rotate: 360 }}
                 transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
               />
-              <div className="absolute inset-[40%] rounded-full bg-violet-500/20 blur-xl" />
-              <div className="absolute inset-[44%] rounded-full bg-violet-400/30" />
+              <div className="absolute inset-[40%] rounded-full blur-xl"
+                style={{ background: "rgba(139, 92, 246, 0.15)" }}
+              />
+              <div className="absolute inset-[44%] rounded-full"
+                style={{ background: "rgba(139, 92, 246, 0.25)" }}
+              />
               <div className="absolute inset-[46%] rounded-full bg-white/10" />
               <div className="absolute inset-[48%] rounded-full bg-white/30" />
             </div>
@@ -498,7 +578,7 @@ export default function HomePageClient({
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
               One Documentation Hub For Everything
             </h2>
-            <p className="text-sm text-slate-400 max-w-xl mx-auto">
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
               Comprehensive docs for every project in the Neural Aurora ecosystem.
             </p>
           </ScrollReveal>
@@ -512,7 +592,8 @@ export default function HomePageClient({
               <motion.div key={project.id} variants={fadeUp}>
                 <Link
                   href={project.href}
-                  className="group block relative overflow-hidden rounded-2xl border border-white/5 bg-white/[0.03] p-6 lg:p-8 transition-all duration-300 hover:bg-white/[0.06] hover:border-white/10"
+                  className="group block relative overflow-hidden rounded-2xl p-6 lg:p-8 transition-all duration-300"
+                  style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div
@@ -520,21 +601,25 @@ export default function HomePageClient({
                     >
                       {ICON_MAP[project.icon] || <Sparkles className="w-5 h-5" />}
                     </div>
-                    <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-violet-400 transition-colors duration-300" />
+                    <ArrowRight className="w-4 h-4 transition-colors duration-300"
+                      style={{ color: "var(--text-tertiary)" }}
+                    />
                   </div>
                   <h2 className="text-xl font-bold tracking-tight text-white mb-1">
                     {project.title}
                   </h2>
-                  <p className="text-xs text-violet-400 font-medium mb-3">
+                  <p className="text-xs font-medium mb-3"
+                    style={{ color: "var(--accent-glow)" }}
+                  >
                     {project.tagline}
                   </p>
-                  <p className="text-sm text-slate-400 leading-relaxed mb-4">
+                  <p className="text-sm leading-relaxed mb-4" style={{ color: "var(--text-secondary)" }}>
                     {project.description}
                   </p>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs" style={{ color: "var(--text-tertiary)" }}>
                     {stats.map((stat) => (
                       <span key={stat.label}>
-                        <span className="text-slate-400 font-medium">
+                        <span className="font-medium" style={{ color: "var(--text-secondary)" }}>
                           {stat.label}
                         </span>
                         : {stat.value}
@@ -557,7 +642,7 @@ export default function HomePageClient({
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
               Everything You Need To Ship
             </h2>
-            <p className="text-sm text-slate-400 max-w-xl mx-auto">
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
               From first setup to production deployment, we have you covered.
             </p>
           </ScrollReveal>
@@ -567,19 +652,22 @@ export default function HomePageClient({
               <motion.div
                 key={feature.id}
                 variants={scaleIn}
-                className={`group p-5 rounded-xl border border-white/5 bg-white/[0.03] hover:bg-white/[0.06] hover:border-violet-500/20 transition-all duration-300 ${
+                className={`group p-5 rounded-xl transition-all duration-300 ${
                   feature.span === "full" ? "md:col-span-2" : ""
                 }`}
+                style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400 group-hover:bg-violet-500/20 transition-colors">
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors"
+                    style={{ background: "var(--eyebrow-bg)", color: "var(--accent-glow)" }}
+                  >
                     {FEATURE_ICON_MAP[feature.icon] || <BookText className="w-5 h-5" />}
                   </div>
                   <h3 className="text-sm font-semibold text-white">
                     {feature.title}
                   </h3>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed pl-0">
+                <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
                   {feature.description}
                 </p>
               </motion.div>
@@ -599,7 +687,7 @@ export default function HomePageClient({
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
               Start Building In Minutes
             </h2>
-            <p className="text-sm text-slate-400 max-w-xl mx-auto">
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
               Four steps from zero to running your project locally.
             </p>
           </ScrollReveal>
@@ -609,16 +697,28 @@ export default function HomePageClient({
               <motion.div
                 key={step.id}
                 variants={fadeUp}
-                className="relative p-5 rounded-xl border border-white/5 bg-white/[0.03]"
+                className="relative p-5 rounded-xl"
+                style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}
               >
-                <span className="text-3xl font-bold bg-gradient-to-b from-violet-500/30 to-transparent bg-clip-text text-transparent mb-2 block">
+                <span className="text-3xl font-bold mb-2 block"
+                  style={{
+                    background: "linear-gradient(180deg, rgba(139,92,246,0.3), transparent)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text"
+                  }}
+                >
                   {String(step.step_number).padStart(2, "0")}
                 </span>
                 <h3 className="text-sm font-semibold text-white mb-1">
                   {step.title}
                 </h3>
-                <p className="text-xs text-slate-400 mb-3">{step.description}</p>
-                <pre className="text-[10px] text-slate-500 bg-white/[0.03] p-2 rounded-lg border border-white/5 overflow-x-auto font-mono">
+                <p className="text-xs mb-3" style={{ color: "var(--text-secondary)" }}>
+                  {step.description}
+                </p>
+                <pre className="text-[10px] p-2 rounded-lg overflow-x-auto font-mono"
+                  style={{ color: "var(--text-tertiary)", background: "var(--card-bg)", border: "1px solid var(--border-color)" }}
+                >
                   {step.code}
                 </pre>
               </motion.div>
@@ -637,19 +737,22 @@ export default function HomePageClient({
                 <motion.div
                   key={stat.id}
                   whileHover={{ y: -2 }}
-                  className="p-5 rounded-xl border border-white/5 bg-white/[0.03] text-center transition-colors duration-200 hover:border-violet-500/20"
+                  className="p-5 rounded-xl text-center transition-colors duration-200"
+                  style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}
                 >
                   {SMALL_ICON_MAP[stat.icon] ? (
-                    <div className="w-5 h-5 text-violet-400 mx-auto mb-2">
+                    <div className="w-5 h-5 mx-auto mb-2"
+                      style={{ color: "var(--accent-glow)" }}
+                    >
                       {SMALL_ICON_MAP[stat.icon]}
                     </div>
                   ) : (
-                    <BookText className="w-5 h-5 text-violet-400 mx-auto mb-2" />
+                    <BookText className="w-5 h-5 mx-auto mb-2" style={{ color: "var(--accent-glow)" }} />
                   )}
                   <div className="text-2xl font-bold text-white mb-1">
                     {stat.value}
                   </div>
-                  <div className="text-xs text-slate-400">{stat.label}</div>
+                  <div className="text-xs" style={{ color: "var(--text-secondary)" }}>{stat.label}</div>
                 </motion.div>
               ))}
             </div>
@@ -661,13 +764,17 @@ export default function HomePageClient({
       <section className="px-4 pb-16 lg:pb-24">
         <div className="max-w-[1400px] mx-auto">
           <ScrollReveal>
-          <div className="rounded-2xl border border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent p-8 lg:p-12 text-center"
+          <div className="rounded-2xl p-8 lg:p-12 text-center"
+            style={{
+              border: "1px solid var(--border-color)",
+              background: "linear-gradient(135deg, rgba(139,92,246,0.03), transparent)"
+            }}
           >
-            <GithubIcon className="w-10 h-10 text-slate-500 mx-auto mb-4" />
+            <GithubIcon className="w-10 h-10 mx-auto mb-4" style={{ color: "var(--text-tertiary)" }} />
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
               Fork It, Customize It, Build Anything
             </h2>
-            <p className="text-sm text-slate-400 max-w-lg mx-auto mb-8">
+            <p className="text-sm max-w-lg mx-auto mb-8" style={{ color: "var(--text-secondary)" }}>
               Both projects are MIT-licensed open source. Clone, customize,
               contribute, and deploy without restrictions.
             </p>
@@ -676,21 +783,23 @@ export default function HomePageClient({
                 href="https://github.com/Techhackontime999/NEURAL-AURORA"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-sm font-medium border border-white/10 transition-all duration-200 active:scale-[0.98]"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200 active:scale-[0.98]"
+                style={{ background: "var(--card-bg)", border: "1px solid var(--border-color)" }}
               >
                 <GithubIcon className="w-4 h-4" />
                 NEURAL AURORA Repo
-                <ExternalLink className="w-3 h-3 text-slate-500" />
+                <ExternalLink className="w-3 h-3" style={{ color: "var(--text-tertiary)" }} />
               </a>
               <a
                 href="https://github.com/Techhackontime999/WACRM"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-sm font-medium border border-white/10 transition-all duration-200 active:scale-[0.98]"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200 active:scale-[0.98]"
+                style={{ background: "var(--card-bg)", border: "1px solid var(--border-color)" }}
               >
                 <GithubIcon className="w-4 h-4" />
                 Neural Aurora CRM Repo
-                <ExternalLink className="w-3 h-3 text-slate-500" />
+                <ExternalLink className="w-3 h-3" style={{ color: "var(--text-tertiary)" }} />
               </a>
             </div>
           </div>
@@ -712,15 +821,17 @@ export default function HomePageClient({
               <motion.div
                 key={faq.id}
                 layout
-                className="rounded-xl border border-white/5 bg-white/[0.03] overflow-hidden"
+                className="rounded-xl overflow-hidden"
+                style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}
               >
                 <button
                   onClick={() => setFaqOpen(faqOpen === i ? null : i)}
-                  className="flex items-center justify-between w-full px-5 py-4 text-left text-sm text-white hover:bg-white/[0.03] transition-colors"
+                  className="flex items-center justify-between w-full px-5 py-4 text-left text-sm text-white transition-colors"
                 >
                   <span className="font-medium">{faq.question}</span>
                   <ChevronRight
-                    className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${faqOpen === i ? "rotate-90" : ""}`}
+                    className={`w-4 h-4 transition-transform duration-200 ${faqOpen === i ? "rotate-90" : ""}`}
+                    style={{ color: "var(--text-tertiary)" }}
                   />
                 </button>
                 {faqOpen === i && (
@@ -728,7 +839,8 @@ export default function HomePageClient({
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                    className="px-5 pb-4 text-xs text-slate-400 leading-relaxed"
+                    className="px-5 pb-4 text-xs leading-relaxed"
+                    style={{ color: "var(--text-secondary)" }}
                   >
                     {faq.answer}
                   </motion.div>
@@ -744,28 +856,34 @@ export default function HomePageClient({
       <section className="px-4 pb-20 lg:pb-32">
         <div className="max-w-[1400px] mx-auto">
           <ScrollReveal>
-          <div className="rounded-2xl border border-white/5 bg-gradient-to-br from-violet-500/10 via-transparent to-teal-500/10 p-8 lg:p-14 text-center relative overflow-hidden"
+          <div className="rounded-2xl p-8 lg:p-14 text-center relative overflow-hidden"
+            style={{
+              border: "1px solid var(--border-color)",
+              background: "linear-gradient(135deg, rgba(139,92,246,0.08), transparent, rgba(45,212,191,0.05))"
+            }}
           >
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.15)_0%,_transparent_70%)]" />
+            <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, rgba(139,92,246,0.12) 0%, transparent 70%)" }} />
             <div className="relative">
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white mb-4">
                 Ready To Build With Neural Aurora?
               </h2>
-              <p className="text-sm text-slate-400 max-w-lg mx-auto mb-8">
+              <p className="text-sm max-w-lg mx-auto mb-8" style={{ color: "var(--text-secondary)" }}>
                 Explore the complete documentation ecosystem and start building
                 powerful experiences today.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link
                   href="/docs"
-                  className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-sm font-medium transition-all duration-200 active:scale-[0.98]"
+                  className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-medium transition-all duration-200 active:scale-[0.98]"
+                  style={{ background: "var(--brand-gradient-strong)" }}
                 >
                   Get Started
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
                 <Link
                   href="/neural-aurora/overview"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white text-sm font-medium border border-white/10 transition-all duration-200 active:scale-[0.98]"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-medium transition-all duration-200 active:scale-[0.98]"
+                  style={{ background: "var(--card-bg)", border: "1px solid var(--border-color)" }}
                 >
                   View Docs
                   <BookOpen className="w-4 h-4" />
@@ -780,13 +898,14 @@ export default function HomePageClient({
       {/* Footer */}
       <footer className="px-4 pb-8">
         <div className="max-w-[1400px] mx-auto text-center">
-          <p className="text-xs text-slate-600">
+          <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
             Built by{" "}
             <a
               href="https://github.com/Techhackontime999"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-violet-400 hover:text-violet-300 transition-colors"
+              className="transition-colors"
+              style={{ color: "var(--accent-glow)" }}
             >
               Techhackontime999
             </a>{" "}

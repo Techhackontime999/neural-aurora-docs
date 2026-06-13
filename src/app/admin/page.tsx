@@ -71,7 +71,7 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">
+      <h1 className="text-2xl font-bold tracking-tight mb-6" style={{ color: "var(--text-primary)" }}>
         Dashboard
       </h1>
 
@@ -82,18 +82,20 @@ export default function AdminDashboard() {
             <Link
               key={card.key}
               href={card.href}
-              className="group p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:shadow-md transition-all"
+              className="group p-5 rounded-xl hover:shadow-md transition-all"
+              style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}
             >
               <div className="flex items-start justify-between mb-3">
                 <div className={`w-10 h-10 rounded-lg ${card.bg} flex items-center justify-center`}>
                   <Icon className={`w-5 h-5 ${card.color}`} />
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-aurora-500 transition-colors" />
+                <ArrowRight className="w-4 h-4 transition-colors"
+                  style={{ color: "var(--text-tertiary)" }} />
               </div>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white">
+              <p className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
                 {stats[card.key]}
               </p>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{card.label}</p>
+              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{card.label}</p>
             </Link>
           );
         })}

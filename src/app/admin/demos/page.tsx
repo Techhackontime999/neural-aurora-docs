@@ -141,7 +141,7 @@ export default function AdminDemosPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>
           Demos
         </h1>
         <button
@@ -154,31 +154,31 @@ export default function AdminDemosPage() {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="p-4 mb-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 mb-6 rounded-xl space-y-4" style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title *</label>
-              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Title *</label>
+              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description</label>
-              <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Description</label>
+              <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Video URL</label>
-              <input type="url" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Video URL</label>
+              <input type="url" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Embed URL</label>
-              <input type="url" value={embedUrl} onChange={(e) => setEmbedUrl(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Embed URL</label>
+              <input type="url" value={embedUrl} onChange={(e) => setEmbedUrl(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Thumbnail URL</label>
-              <input type="url" value={thumbnailUrl} onChange={(e) => setThumbnailUrl(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Thumbnail URL</label>
+              <input type="url" value={thumbnailUrl} onChange={(e) => setThumbnailUrl(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Project Type</label>
-              <select value={projectType} onChange={(e) => setProjectType(e.target.value as ProjectType)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500">
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Project Type</label>
+              <select value={projectType} onChange={(e) => setProjectType(e.target.value as ProjectType)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}>
                 <option value="both">Both</option>
                 <option value="neural-aurora">NEURAL AURORA</option>
                 <option value="wacrm">Neural Aurora CRM</option>
@@ -186,12 +186,12 @@ export default function AdminDemosPage() {
             </div>
             <div className="flex items-end gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Sort Order</label>
-                <input type="number" value={sortOrder} onChange={(e) => setSortOrder(Number(e.target.value))} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+                <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Sort Order</label>
+                <input type="number" value={sortOrder} onChange={(e) => setSortOrder(Number(e.target.value))} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
               </div>
               <label className="flex items-center gap-2 pb-2">
                 <input type="checkbox" checked={isPublished} onChange={(e) => setIsPublished(e.target.checked)} className="w-4 h-4 rounded border-slate-300 text-aurora-500 focus:ring-aurora-500" />
-                <span className="text-sm text-slate-700 dark:text-slate-300">Published</span>
+                <span className="text-sm" style={{ color: "var(--text-secondary)" }}>Published</span>
               </label>
             </div>
           </div>
@@ -211,7 +211,7 @@ export default function AdminDemosPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-3 mb-4 px-4 py-2.5 rounded-lg bg-aurora-50 dark:bg-aurora-950/20 border border-aurora-200 dark:border-aurora-900"
         >
-          <span className="text-sm text-aurora-700 dark:text-aurora-300 font-medium">
+          <span className="text-sm font-medium" style={{ color: "var(--accent-glow)" }}>
             {selected.size} selected
           </span>
           <button
@@ -224,7 +224,7 @@ export default function AdminDemosPage() {
           </button>
           <button
             onClick={clearSelection}
-            className="px-3 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]"
+            className="px-3 py-1.5 rounded-md text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]" style={{ border: "1px solid var(--border-color)", color: "var(--text-secondary)" }}
           >
             Clear Selection
           </button>
@@ -232,9 +232,9 @@ export default function AdminDemosPage() {
       )}
 
       {loading ? (
-        <div className="text-center py-12 text-sm text-slate-400">Loading...</div>
+        <div className="text-center py-12 text-sm" style={{ color: "var(--text-tertiary)" }}>Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-12 text-sm text-slate-400">
+        <div className="text-center py-12 text-sm" style={{ color: "var(--text-tertiary)" }}>
           {search ? "No demos match your search." : "No demos yet. Add one to show on the homepage."}
         </div>
       ) : (
@@ -249,9 +249,9 @@ export default function AdminDemosPage() {
               key={d.id}
               variants={itemVariants}
               layout
-              className={`p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between ${
+              className={`p-4 rounded-xl flex items-center justify-between ${
                 selected.has(d.id) ? "ring-2 ring-aurora-500/30" : ""
-              }`}
+              }`} style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <input
@@ -262,28 +262,28 @@ export default function AdminDemosPage() {
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{d.title}</p>
+                    <p className="text-sm font-medium truncate" style={{ color: "var(--text-primary)" }}>{d.title}</p>
                     <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 ${d.project_type === "both" ? "bg-purple-100 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400" : d.project_type === "neural-aurora" ? "bg-violet-100 dark:bg-violet-950/30 text-violet-600 dark:text-violet-400" : "bg-cyan-100 dark:bg-cyan-950/30 text-cyan-600 dark:text-cyan-400"}`}>
                       {d.project_type}
                     </span>
                   </div>
                   {d.description && (
-                    <p className="text-xs text-slate-400 mt-0.5 truncate">{d.description}</p>
+                    <p className="text-xs mt-0.5 truncate" style={{ color: "var(--text-tertiary)" }}>{d.description}</p>
                   )}
                 </div>
               </div>
               <div className="flex items-center gap-1 ml-3 shrink-0">
                 <button
                   onClick={() => handleTogglePublish(d)}
-                  className={`p-1.5 rounded-lg transition-colors ${d.is_published ? "text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800" : "text-slate-500 hover:text-green-500 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+                  className={`p-1.5 rounded-lg transition-colors ${d.is_published ? "hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800" : "hover:text-green-500 hover:bg-slate-100 dark:hover:bg-slate-800"}`} style={{ color: d.is_published ? "var(--text-tertiary)" : "var(--text-secondary)" }}
                   title={d.is_published ? "Unpublish" : "Publish"}
                 >
                   {d.is_published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                 </button>
-                <button onClick={() => handleEdit(d)} className="p-1.5 rounded-lg text-slate-400 hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <button onClick={() => handleEdit(d)} className="p-1.5 rounded-lg hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" style={{ color: "var(--text-tertiary)" }}>
                   <Edit className="w-4 h-4" />
                 </button>
-                <button onClick={() => handleSingleDelete(d.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
+                <button onClick={() => handleSingleDelete(d.id)} className="p-1.5 rounded-lg hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors" style={{ color: "var(--text-tertiary)" }}>
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>

@@ -63,8 +63,8 @@ function AdminShell({ children }: { children: React.ReactNode }) {
 
   if (loading || profileLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
-        <div className="w-6 h-6 border-2 border-aurora-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-primary)" }}>
+        <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{ borderColor: "var(--accent-glow)", borderTopColor: "transparent" }} />
       </div>
     );
   }
@@ -72,7 +72,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
   if (!user || !profile || profile.is_approved !== true) return null;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen" style={{ background: "var(--bg-primary)" }}>
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
@@ -84,23 +84,25 @@ function AdminShell({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside
         className={clsx(
-          "fixed top-0 left-0 z-50 h-full w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 overflow-y-auto transition-transform duration-200 lg:translate-x-0",
+          "fixed top-0 left-0 z-50 h-full w-64 overflow-y-auto transition-transform duration-200 lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
+        style={{ background: "var(--bg-secondary)", borderRight: "1px solid var(--border-color)" }}
       >
-        <div className="p-4 border-b border-slate-200 dark:border-slate-800">
+        <div className="p-4" style={{ borderBottom: "1px solid var(--border-color)" }}>
           <div className="flex items-center justify-between">
             <Link href="/admin" className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-aurora-400 to-aurora-600 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "var(--brand-gradient)" }}>
                 <span className="text-white text-xs font-bold">N</span>
               </div>
-              <span className="text-sm font-semibold text-slate-900 dark:text-white">
+              <span className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                 Docs Admin
               </span>
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white"
+              className="lg:hidden p-1 transition-colors"
+              style={{ color: "var(--text-secondary)" }}
             >
               <X className="w-4 h-4" />
             </button>
@@ -110,7 +112,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
         <nav className="p-3 space-y-1">
           {navItems.map((group) => (
             <div key={group.section} className="mb-4">
-              <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+              <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-tertiary)" }}>
                 {group.section}
               </p>
               {group.items
@@ -125,10 +127,12 @@ function AdminShell({ children }: { children: React.ReactNode }) {
                       onClick={() => setSidebarOpen(false)}
                       className={clsx(
                         "flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-colors",
-                        isActive
-                          ? "bg-aurora-50 dark:bg-aurora-950/30 text-aurora-700 dark:text-aurora-300 font-medium"
-                          : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
+                        isActive ? "font-medium" : "hover:opacity-80"
                       )}
+                      style={{
+                        background: isActive ? "var(--eyebrow-bg)" : "transparent",
+                        color: isActive ? "var(--accent-glow)" : "var(--text-secondary)"
+                      }}
                     >
                       <Icon className="w-4 h-4" />
                       {item.label}
@@ -139,13 +143,14 @@ function AdminShell({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
 
-        <div className="p-3 border-t border-slate-200 dark:border-slate-800 mt-4">
-          <div className="px-3 py-2 text-xs text-slate-500 dark:text-slate-400 truncate">
+        <div className="p-3 mt-4" style={{ borderTop: "1px solid var(--border-color)" }}>
+          <div className="px-3 py-2 text-xs truncate" style={{ color: "var(--text-tertiary)" }}>
             {profile?.email}
           </div>
           <button
             onClick={signOut}
-            className="flex items-center gap-2 w-full px-3 py-2 text-sm text-slate-600 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors"
+            className="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-lg transition-colors"
+            style={{ color: "var(--text-secondary)" }}
           >
             <LogOut className="w-4 h-4" />
             Sign out
@@ -156,27 +161,31 @@ function AdminShell({ children }: { children: React.ReactNode }) {
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 h-14 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg">
+        <header className="sticky top-0 z-30 h-14"
+          style={{ borderBottom: "1px solid var(--border-color)", background: "var(--glass-bg)", backdropFilter: "blur(12px)" }}
+        >
           <div className="flex items-center justify-between h-full px-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white"
+              className="lg:hidden p-1.5 transition-colors"
+              style={{ color: "var(--text-secondary)" }}
             >
               <Menu className="w-5 h-5" />
             </button>
 
-            <div className="hidden lg:flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-              <Link href="/" className="hover:text-aurora-500 transition-colors">
+            <div className="hidden lg:flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
+              <Link href="/" className="transition-colors" style={{ color: "var(--text-secondary)" }}>
                 Docs Home
               </Link>
               <span>/</span>
-              <span className="text-slate-900 dark:text-white font-medium">Admin</span>
+              <span className="font-medium" style={{ color: "var(--text-primary)" }}>Admin</span>
             </div>
 
             <div className="flex items-center gap-2 ml-auto">
               <Link
                 href="/"
-                className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-aurora-500 transition-colors"
+                className="flex items-center gap-1.5 text-xs transition-colors"
+                style={{ color: "var(--text-tertiary)" }}
               >
                 <ExternalLink className="w-3 h-3" />
                 View Site

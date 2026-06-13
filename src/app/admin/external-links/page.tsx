@@ -108,7 +108,7 @@ export default function AdminExternalLinksPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>
           External Links
         </h1>
         <button
@@ -121,26 +121,26 @@ export default function AdminExternalLinksPage() {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="p-4 mb-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 mb-6 rounded-xl space-y-4" style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title *</label>
-              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="e.g. CRM Live" className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Title *</label>
+              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="e.g. CRM Live" className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">URL *</label>
-              <input type="url" value={url} onChange={(e) => setUrl(e.target.value)} required placeholder="https://example.com" className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>URL *</label>
+              <input type="url" value={url} onChange={(e) => setUrl(e.target.value)} required placeholder="https://example.com" className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Sort Order</label>
-              <input type="number" value={sortOrder} onChange={(e) => setSortOrder(Number(e.target.value))} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Sort Order</label>
+              <input type="number" value={sortOrder} onChange={(e) => setSortOrder(Number(e.target.value))} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }} />
             </div>
           </div>
           <div className="flex items-center gap-3">
             <button type="submit" className="px-4 py-2 rounded-lg bg-aurora-500 hover:bg-aurora-400 text-white text-sm font-medium transition-all active:scale-[0.98]">
               {editId ? "Update Link" : "Create Link"}
             </button>
-            <button type="button" onClick={resetForm} className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]">
+            <button type="button" onClick={resetForm} className="px-4 py-2 rounded-lg text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]" style={{ border: "1px solid var(--border-color)", color: "var(--text-secondary)" }}>
               Cancel
             </button>
           </div>
@@ -157,7 +157,7 @@ export default function AdminExternalLinksPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-3 mb-4 px-4 py-2.5 rounded-lg bg-aurora-50 dark:bg-aurora-950/20 border border-aurora-200 dark:border-aurora-900"
         >
-          <span className="text-sm text-aurora-700 dark:text-aurora-300 font-medium">
+          <span className="text-sm font-medium" style={{ color: "var(--accent-glow)" }}>
             {selected.size} selected
           </span>
           <button
@@ -170,7 +170,7 @@ export default function AdminExternalLinksPage() {
           </button>
           <button
             onClick={clearSelection}
-            className="px-3 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]"
+            className="px-3 py-1.5 rounded-md text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.98]" style={{ border: "1px solid var(--border-color)", color: "var(--text-secondary)" }}
           >
             Clear Selection
           </button>
@@ -178,9 +178,9 @@ export default function AdminExternalLinksPage() {
       )}
 
       {loading ? (
-        <div className="text-center py-12 text-sm text-slate-400">Loading...</div>
+        <div className="text-center py-12 text-sm" style={{ color: "var(--text-tertiary)" }}>Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-12 text-sm text-slate-400">
+        <div className="text-center py-12 text-sm" style={{ color: "var(--text-tertiary)" }}>
           {search ? "No links match your search." : "No external links yet."}
         </div>
       ) : (
@@ -195,9 +195,9 @@ export default function AdminExternalLinksPage() {
               key={item.id}
               variants={itemVariants}
               layout
-              className={`p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between ${
+              className={`p-4 rounded-xl flex items-center justify-between ${
                 selected.has(item.id) ? "ring-2 ring-aurora-500/30" : ""
-              }`}
+              }`} style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <input
@@ -206,17 +206,17 @@ export default function AdminExternalLinksPage() {
                   onChange={() => toggleOne(item.id)}
                   className="rounded border-slate-300 dark:border-slate-600 text-aurora-500 focus:ring-aurora-500 shrink-0"
                 />
-                <ExternalLink className="w-4 h-4 text-aurora-500 shrink-0" />
+                <ExternalLink className="w-4 h-4 shrink-0" style={{ color: "var(--accent-glow)" }} />
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{item.title}</p>
-                  <p className="text-xs text-slate-500 font-mono mt-0.5 truncate">{item.url}</p>
+                  <p className="text-sm font-medium truncate" style={{ color: "var(--text-primary)" }}>{item.title}</p>
+                  <p className="text-xs font-mono mt-0.5 truncate" style={{ color: "var(--text-secondary)" }}>{item.url}</p>
                 </div>
               </div>
               <div className="flex items-center gap-1 shrink-0">
-                <button onClick={() => handleEdit(item)} className="p-1.5 rounded-lg text-slate-400 hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <button onClick={() => handleEdit(item)} className="p-1.5 rounded-lg hover:text-aurora-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" style={{ color: "var(--text-tertiary)" }}>
                   <Edit className="w-4 h-4" />
                 </button>
-                <button onClick={() => handleSingleDelete(item.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
+                <button onClick={() => handleSingleDelete(item.id)} className="p-1.5 rounded-lg hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors" style={{ color: "var(--text-tertiary)" }}>
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
