@@ -21,6 +21,9 @@ import {
 } from "lucide-react";
 import { useState, useEffect, type ReactNode } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import dynamic from "next/dynamic";
+
+const Background3D = dynamic(() => import("@/components/Background3D"), { ssr: false, loading: () => null });
 
 const ICON_MAP: Record<string, ReactNode> = {
   sparkles: <Sparkles className="w-5 h-5" />,
@@ -348,7 +351,8 @@ export default function HomePageClient({
   const [data, setData] = useState<HomepageData>(initialData);
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white">
+    <>
+    <div className="min-h-screen text-white">
       <ScrollProgressBar />
       <FloatingOrbs />
 
@@ -791,5 +795,7 @@ export default function HomePageClient({
         </div>
       </footer>
     </div>
+    <Background3D />
+  </>
   );
 }

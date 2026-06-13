@@ -1,0 +1,54 @@
+{
+  "name": "Neural Aurora — Documentation",
+  "short_name": "NA Docs",
+  "description": "Official documentation for NEURAL AURORA (The Synaptic Portfolio) and WACRM (WhatsApp CRM) — the Neural Aurora CRM. Built by Techhackontime999.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "portrait-primary",
+  "lang": "en",
+  "categories": ["documentation", "development", "portfolio"],
+  "shortcuts": [
+    {
+      "name": "Docs",
+      "short_name": "Docs",
+      "description": "Browse documentation",
+      "url": "/docs"
+    },
+    {
+      "name": "Home",
+      "short_name": "Home",
+      "description": "Go to homepage",
+      "url": "/"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Neural Aurora Documentation"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
