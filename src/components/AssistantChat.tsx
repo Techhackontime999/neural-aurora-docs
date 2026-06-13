@@ -35,10 +35,19 @@ interface AssistantChatProps {
 }
 
 const USER_QUICK_ACTIONS: ActionItem[] = [
-  { label: "Dashboard", category: "Overview", api: { method: "GET", url: "/api/homepage" } },
+  // Overview
+  { label: "Dashboard", category: "Overview", api: { method: "GET", url: "/api/docs" } },
   { label: "Help", category: "Overview", prompt: "Help" },
+
+  // Pages
   { label: "List Pages", category: "Pages", api: { method: "GET", url: "/api/docs" } },
+  { label: "Search Pages", category: "Pages", prompt: "Search for React components" },
+  { label: "Get Page", category: "Pages", prompt: 'Get page titled "Getting Started"' },
+
+  // Categories
   { label: "Categories", category: "Categories", api: { method: "GET", url: "/api/categories" } },
+
+  // Content
   { label: "Contributors", category: "Content", api: { method: "GET", url: "/api/contributors" } },
   { label: "Demos", category: "Content", api: { method: "GET", url: "/api/demos" } },
   { label: "Installation Guides", category: "Content", api: { method: "GET", url: "/api/installation-guides" } },
