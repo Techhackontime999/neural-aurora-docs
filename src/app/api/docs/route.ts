@@ -5,19 +5,10 @@ import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  const query = supabaseAdmin()
+  const { data, error } = await supabase
     .from("doc_pages")
-    .select("*, category:doc_categories(name, slug)");
-
-  if (!user) {
-    query.eq("status", "published");
-  }
-
-  query.order("sort_order", { ascending: true });
-
-  const { data, error } = await query;
+    .select("*, category:doc_categories(name, slug)")
+    .order("sort_order", { ascending: true });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ pages: data });

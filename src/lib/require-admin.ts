@@ -1,4 +1,3 @@
-import { supabaseAdmin } from "./supabase/admin";
 import { createClient } from "./supabase/server";
 import { NextResponse } from "next/server";
 
@@ -18,8 +17,8 @@ export async function requireAdmin() {
 
   let profile;
   try {
-    const admin = supabaseAdmin();
-    const { data } = await admin
+    const supabase = await createClient();
+    const { data } = await supabase
       .from("profiles")
       .select("role, is_approved")
       .eq("user_id", user.id)

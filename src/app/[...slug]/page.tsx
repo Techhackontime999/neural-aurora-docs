@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
@@ -61,13 +61,13 @@ export default async function DynamicDocPage({ params }: Props) {
     notFound();
   }
 
-  const admin = supabaseAdmin();
+  const supabase = await createClient();
 
   // Single-segment URL: show the category index (first page by sort_order)
   if (slugs.length === 1) {
     const [categorySlug] = slugs;
 
-    const { data: category, error: catErr } = await admin
+    const { data: category, error: catErr } = await supabase
       .from("doc_categories")
       .select("id, name")
       .eq("slug", categorySlug)
@@ -78,7 +78,7 @@ export default async function DynamicDocPage({ params }: Props) {
     }
 
     if (category) {
-      const { data: page, error: pageErr } = await admin
+      const { data: page, error: pageErr } = await supabase
         .from("doc_pages")
         .select("title, excerpt, content")
         .eq("category_id", category.id)
@@ -109,7 +109,7 @@ export default async function DynamicDocPage({ params }: Props) {
   if (slugs.length === 2) {
     const [categorySlug, pageSlug] = slugs;
 
-    const { data: category, error: catErr } = await admin
+    const { data: category, error: catErr } = await supabase
       .from("doc_categories")
       .select("id, name")
       .eq("slug", categorySlug)
@@ -120,7 +120,7 @@ export default async function DynamicDocPage({ params }: Props) {
     }
 
     if (category) {
-      const { data: page, error: pageErr } = await admin
+      const { data: page, error: pageErr } = await supabase
         .from("doc_pages")
         .select("*")
         .eq("category_id", category.id)
@@ -147,7 +147,7 @@ export default async function DynamicDocPage({ params }: Props) {
   // Standalone page by full slug path
   const fullSlug = slugs.join("/");
 
-  const { data: page, error: pageErr } = await admin
+  const { data: page, error: pageErr } = await supabase
     .from("doc_pages")
     .select("*, category:doc_categories(name, slug)")
     .eq("slug", fullSlug)

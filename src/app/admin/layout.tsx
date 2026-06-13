@@ -22,6 +22,7 @@ import {
   PlayCircle,
   Link2,
   Home,
+  Sparkles,
 } from "lucide-react";
 import { clsx } from "clsx";
 
@@ -33,6 +34,7 @@ const navItems = [
       { label: "Homepage", href: "/admin/homepage", icon: Home },
       { label: "Doc Pages", href: "/admin/docs", icon: FileText },
       { label: "Categories", href: "/admin/categories", icon: FolderTree },
+      { label: "AI Automation", href: "/admin/ai-automation", icon: Sparkles },
     ],
   },
   {

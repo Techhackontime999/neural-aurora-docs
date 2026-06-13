@@ -1,8 +1,8 @@
-import { supabaseAdmin } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/require-admin";
+import { createClient } from "@/lib/supabase/server";
 import { NextResponse, type NextRequest } from "next/server";
 
-const VALID_SECTIONS = ["projects", "features", "stats", "steps", "faqs"] as const;
+const VALID_SECTIONS = ["projects", "features", "stats", "steps", "faqs", "repos"] as const;
 const TABLE_MAP: Record<string, string> = {
   projects: "home_projects",
   features: "home_features",
@@ -27,9 +27,9 @@ export async function GET(
     return NextResponse.json({ error: "Invalid section" }, { status: 400 });
   }
 
-  const admin = supabaseAdmin();
+  const supabase = await createClient();
   const table = TABLE_MAP[section];
-  let query = admin.from(table).select("*").order("sort_order", { ascending: true });
+  let query = supabase.from(table).select("*").order("sort_order", { ascending: true });
   if (section === "steps") {
     query = query.order("step_number", { ascending: true });
   }
@@ -52,9 +52,9 @@ export async function POST(
   }
 
   const body = await request.json();
-  const admin = supabaseAdmin();
+  const supabase = await createClient();
   const table = TABLE_MAP[section];
-  const { data, error } = await admin
+  const { data, error } = await supabase
     .from(table)
     .insert(body)
     .select()

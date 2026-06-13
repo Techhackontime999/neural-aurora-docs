@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { DocsShell } from "@/components/DocsShell";
 import Loader from "@/components/Loader";
+import AssistantButton from "@/components/AssistantButton";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -103,6 +104,7 @@ export default function RootLayout({
         <Script id="loader-hide" strategy="afterInteractive">{`document.getElementById("__loader")?.classList.add("hide");`}</Script>
         <ThemeProvider>
           <DocsShell>{children}</DocsShell>
+          <AssistantButton />
           <Loader />
         </ThemeProvider>
       </body>

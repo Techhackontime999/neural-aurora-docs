@@ -1,13 +1,13 @@
-import { supabaseAdmin } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/require-admin";
+import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   const { error: authError } = await requireAdmin();
   if (authError) return authError;
 
-  const admin = supabaseAdmin();
-  const { data: users, error } = await admin
+  const supabase = await createClient();
+  const { data: users, error } = await supabase
     .from("profiles")
     .select("id, user_id, full_name, email, role, is_approved, avatar_url, created_at")
     .order("created_at", { ascending: false });

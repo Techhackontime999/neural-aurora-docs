@@ -4,8 +4,8 @@ import { requireAdmin } from "@/lib/require-admin";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET() {
-  const admin = supabaseAdmin();
-  const { data, error } = await admin
+  const supabase = await createClient();
+  const { data, error } = await supabase
     .from("installation_guides")
     .select("*")
     .order("sort_order", { ascending: true });
