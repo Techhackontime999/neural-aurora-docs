@@ -108,35 +108,46 @@ export default function Navbar() {
                 <AnimatePresence>
                   {productsOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -4 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute left-0 top-full mt-1 w-[420px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden"
+                      initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                      transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                      className="absolute left-0 top-full mt-2 min-w-[480px] rounded-2xl overflow-hidden"
+                      style={{
+                        background: "var(--card-bg)",
+                        border: "1px solid var(--border-color)",
+                        boxShadow: "0 20px 60px -15px rgba(0,0,0,0.3)",
+                      }}
                     >
                       {products.length === 0 ? (
-                        <div className="px-4 py-6 text-xs text-slate-400 dark:text-slate-500 text-center">
+                        <div className="px-4 py-6 text-xs text-center" style={{ color: "var(--text-tertiary)" }}>
                           No products available
                         </div>
                       ) : (
-                        products.map((p) => (
-                          <a
-                            key={p.id}
-                            href={p.href}
-                            onClick={() => setProductsOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
-                          >
-                            <div className="flex-1 min-w-0">
-                              <span className="text-sm font-medium text-slate-900 dark:text-white group-hover:text-violet-500 transition-colors">
-                                {p.title}
-                              </span>
-                              <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
-                                {p.tagline}
-                              </p>
-                            </div>
-                            <ExternalLink className="w-3 h-3 text-slate-300 dark:text-slate-600 group-hover:text-violet-500 transition-colors shrink-0" />
-                          </a>
-                        ))
+                        <div className="p-4">
+                          <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                            {products.map((p) => (
+                              <a
+                                key={p.id}
+                                href={p.href}
+                                onClick={() => setProductsOpen(false)}
+                                className="flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all group"
+                                style={{ color: "var(--text-secondary)" }}
+                              >
+                                <div
+                                  className="w-1.5 h-1.5 rounded-full shrink-0"
+                                  style={{ backgroundColor: p.gradient?.startsWith("#") ? p.gradient : "var(--accent-glow)" }}
+                                />
+                                <span className="text-xs truncate group-hover" style={{ color: "var(--text-primary)" }}>
+                                  {p.title}
+                                </span>
+                                {p.href?.startsWith("http") && (
+                                  <ExternalLink className="w-2.5 h-2.5 shrink-0 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: "var(--text-tertiary)" }} />
+                                )}
+                              </a>
+                            ))}
+                          </div>
+                        </div>
                       )}
                     </motion.div>
                   )}
@@ -250,28 +261,36 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.15 }}
-            className="fixed left-0 right-0 top-14 z-50 lg:hidden bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shadow-xl max-h-[60vh] overflow-y-auto"
+            className="fixed left-0 right-0 top-14 z-50 lg:hidden max-h-[60vh] overflow-y-auto"
+            style={{
+              background: "var(--bg-secondary)",
+              borderBottom: "1px solid var(--border-color)",
+            }}
           >
             {products.length === 0 ? (
-              <div className="px-4 py-6 text-xs text-slate-400 dark:text-slate-500 text-center">
+              <div className="px-4 py-6 text-xs text-center" style={{ color: "var(--text-tertiary)" }}>
                 No products available
               </div>
             ) : (
-              products.map((p) => (
-                <a
-                  key={p.id}
-                  href={p.href}
-                  onClick={() => setProductsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
-                >
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-medium text-slate-900 dark:text-white">
+              <div className="p-3 space-y-0.5">
+                {products.map((p) => (
+                  <a
+                    key={p.id}
+                    href={p.href}
+                    onClick={() => setProductsOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    <div
+                      className="w-1.5 h-1.5 rounded-full shrink-0"
+                      style={{ backgroundColor: p.gradient?.startsWith("#") ? p.gradient : "var(--accent-glow)" }}
+                    />
+                    <span className="text-sm" style={{ color: "var(--text-primary)" }}>
                       {p.title}
                     </span>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{p.tagline}</p>
-                  </div>
-                </a>
-              ))
+                  </a>
+                ))}
+              </div>
             )}
           </motion.div>
         )}
