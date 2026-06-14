@@ -19,13 +19,14 @@ interface Guide {
 
 export default function AdminGuidesPage() {
   const [guides, setGuides] = useState<Guide[]>([]);
+  const [categories, setCategories] = useState<{ name: string; slug: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [projectType, setProjectType] = useState("neural-aurora");
+  const [projectType, setProjectType] = useState("");
   const [content, setContent] = useState("");
   const [sortOrder, setSortOrder] = useState(0);
 
@@ -40,7 +41,16 @@ export default function AdminGuidesPage() {
     }
   };
 
-  useEffect(() => { fetchGuides(); }, []);
+  useEffect(() => {
+    fetchGuides();
+    fetch("/api/categories").then(async (res) => {
+      if (!res.ok) return;
+      const data = await res.json();
+      const cats = data.categories ?? [];
+      setCategories(cats);
+      if (cats.length > 0) setProjectType(cats[0].slug);
+    });
+  }, []);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return guides;
@@ -129,9 +139,11 @@ export default function AdminGuidesPage() {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Project Type</label>
-            <select value={projectType} onChange={(e) => setProjectType(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}>
-              <option value="neural-aurora">NEURAL AURORA</option>
-              <option value="wacrm">Neural Aurora CRM</option>
+            <select value={projectType} onChange={(e) => setProjectType(e.target.value)} required className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}>
+              {categories.length === 0 && <option value="">Loading...</option>}
+              {categories.map((c) => (
+                <option key={c.slug} value={c.slug}>{c.name}</option>
+              ))}
             </select>
           </div>
           <div>

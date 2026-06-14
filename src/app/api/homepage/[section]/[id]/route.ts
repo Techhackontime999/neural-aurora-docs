@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/require-admin";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse, type NextRequest } from "next/server";
 
-const VALID_SECTIONS = ["projects", "features", "stats", "steps", "faqs"] as const;
+const VALID_SECTIONS = ["projects", "features", "stats", "steps", "faqs", "repos"] as const;
 const TABLE_MAP: Record<string, string> = {
   projects: "home_projects",
   features: "home_features",

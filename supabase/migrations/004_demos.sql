@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS demos (
   video_url TEXT DEFAULT '',
   embed_url TEXT DEFAULT '',
   thumbnail_url TEXT DEFAULT '',
-  project_type TEXT NOT NULL DEFAULT 'both' CHECK (project_type IN ('neural-aurora', 'wacrm', 'both')),
+  project_type TEXT NOT NULL DEFAULT 'both',
   sort_order INTEGER DEFAULT 0,
   is_published BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW(),

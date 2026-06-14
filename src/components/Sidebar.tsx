@@ -51,16 +51,20 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
 
     const load = async () => {
       try {
-        const [catRes, docRes, linkRes] = await Promise.all([
+        const [catRes, docRes, linkRes, guideRes, releaseRes] = await Promise.all([
           fetch("/api/categories"),
           fetch("/api/docs"),
           fetch("/api/external-links"),
+          fetch("/api/installation-guides"),
+          fetch("/api/release-notes"),
         ]);
 
-        const [catData, docData, linkData] = await Promise.all([
+        const [catData, docData, linkData, guideData, releaseData] = await Promise.all([
           catRes.json(),
           docRes.json(),
           linkRes.json(),
+          guideRes.json(),
+          releaseRes.json(),
         ]);
 
         if (cancelled) return;
@@ -92,6 +96,29 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
           slug: cat.slug,
           items: pageMap[cat.slug] || [],
         }));
+
+        const guides = guideData.guides ?? [];
+        const releases = releaseData.releases ?? [];
+
+        for (const guide of guides) {
+          const section = result.find((s) => s.slug === guide.project_type);
+          if (section) {
+            section.items.push({
+              title: guide.title,
+              href: `/installation-guides/${guide.slug}`,
+            });
+          }
+        }
+
+        for (const release of releases) {
+          const section = result.find((s) => s.slug === release.project_type);
+          if (section) {
+            section.items.push({
+              title: release.title,
+              href: `/release-notes/${release.id}`,
+            });
+          }
+        }
 
         setSections(result);
         setExternalLinks(linkData.links ?? []);

@@ -19,10 +19,11 @@ interface Demo {
   is_published: boolean;
 }
 
-type ProjectType = "neural-aurora" | "wacrm" | "both";
+type ProjectType = string;
 
 export default function AdminDemosPage() {
   const [demos, setDemos] = useState<Demo[]>([]);
+  const [categories, setCategories] = useState<{ name: string; slug: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [deleting, setDeleting] = useState(false);
@@ -48,7 +49,14 @@ export default function AdminDemosPage() {
     }
   };
 
-  useEffect(() => { fetchDemos(); }, []);
+  useEffect(() => {
+    fetchDemos();
+    fetch("/api/categories").then(async (res) => {
+      if (!res.ok) return;
+      const data = await res.json();
+      setCategories(data.categories ?? []);
+    });
+  }, []);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return demos;
@@ -180,8 +188,9 @@ export default function AdminDemosPage() {
               <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Project Type</label>
               <select value={projectType} onChange={(e) => setProjectType(e.target.value as ProjectType)} className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-aurora-500" style={{ color: "var(--text-primary)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}>
                 <option value="both">Both</option>
-                <option value="neural-aurora">NEURAL AURORA</option>
-                <option value="wacrm">Neural Aurora CRM</option>
+                {categories.map((c) => (
+                  <option key={c.slug} value={c.slug}>{c.name}</option>
+                ))}
               </select>
             </div>
             <div className="flex items-end gap-4">

@@ -14,6 +14,7 @@ interface PageItem {
   title: string;
   slug: string;
   excerpt: string | null;
+  href?: string;
 }
 
 interface Category {
@@ -42,14 +43,18 @@ export default function DocsPage() {
 
     const load = async () => {
       try {
-        const [catRes, docRes] = await Promise.all([
+        const [catRes, docRes, guideRes, releaseRes] = await Promise.all([
           fetch("/api/categories"),
           fetch("/api/docs"),
+          fetch("/api/installation-guides"),
+          fetch("/api/release-notes"),
         ]);
 
-        const [catData, docData] = await Promise.all([
+        const [catData, docData, guideData, releaseData] = await Promise.all([
           catRes.json(),
           docRes.json(),
+          guideRes.json(),
+          releaseRes.json(),
         ]);
 
         if (cancelled) return;
@@ -75,14 +80,41 @@ export default function DocsPage() {
           });
         }
 
-        setCategories(
-          cats.map((c: any) => ({
-            id: c.id,
-            name: c.name,
-            slug: c.slug,
-            pages: pageMap[c.slug] || [],
-          }))
-        );
+        const merged = cats.map((c: any) => ({
+          id: c.id,
+          name: c.name,
+          slug: c.slug,
+          pages: pageMap[c.slug] || [],
+        }));
+
+        const guides = guideData.guides ?? [];
+        const releases = releaseData.releases ?? [];
+
+        for (const guide of guides) {
+          const section = merged.find((s: any) => s.slug === guide.project_type);
+          if (section) {
+            section.pages.push({
+              title: guide.title,
+              slug: guide.slug,
+              excerpt: null,
+              href: `/installation-guides/${guide.slug}`,
+            });
+          }
+        }
+
+        for (const release of releases) {
+          const section = merged.find((s: any) => s.slug === release.project_type);
+          if (section) {
+            section.pages.push({
+              title: release.title,
+              slug: release.id,
+              excerpt: `v${release.version}`,
+              href: `/release-notes/${release.id}`,
+            });
+          }
+        }
+
+        setCategories(merged);
       } catch (e) {
         if (!cancelled) setError("Failed to load documentation. Check the console for details.");
         console.error("Error loading docs:", e);
@@ -146,7 +178,7 @@ export default function DocsPage() {
                   {category.pages.map((page, j) => (
                     <Link
                       key={page.slug}
-                      href={`/${category.slug}/${page.slug}`}
+                      href={page.href ?? `/${category.slug}/${page.slug}`}
                       className="group flex items-start gap-3 px-4 py-3 rounded-xl transition-all duration-200"
                       style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)" }}
                     >
