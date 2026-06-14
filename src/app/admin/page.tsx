@@ -10,6 +10,9 @@ import {
   Download,
   Megaphone,
   ArrowRight,
+  Upload,
+  FileDown,
+  Printer,
 } from "lucide-react";
 
 interface Stats {
@@ -69,11 +72,73 @@ export default function AdminDashboard() {
     return () => { cancelled = true; };
   }, []);
 
+  const handleExport = async () => {
+    try {
+      const [pages, categories, guides, releases, demos] = await Promise.all([
+        fetch("/api/docs").then((r) => r.ok ? r.json() : { pages: [] }),
+        fetch("/api/categories").then((r) => r.ok ? r.json() : { categories: [] }),
+        fetch("/api/installation-guides").then((r) => r.ok ? r.json() : { guides: [] }),
+        fetch("/api/release-notes").then((r) => r.ok ? r.json() : { releases: [] }),
+        fetch("/api/demos").then((r) => r.ok ? r.json() : { demos: [] }),
+      ]);
+
+      const data = { pages: pages.pages, categories: categories.categories, guides: guides.guides, releases: releases.releases, demos: demos.demos };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = `neural-aurora-docs-export-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click(); URL.revokeObjectURL(url);
+    } catch { alert("Export failed"); }
+  };
+
+  const handleImport = () => {
+    const input = document.createElement("input");
+    input.type = "file"; input.accept = ".json";
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        let imported = 0;
+        for (const table of ["pages", "categories", "guides", "releases", "demos"] as const) {
+          const items = data[table];
+          if (!items?.length) continue;
+          const endpoint = table === "pages" ? "docs" : table === "guides" ? "installation-guides" : table === "releases" ? "release-notes" : table;
+          for (const item of items) {
+            const { id, created_at, updated_at, ...rest } = item;
+            const res = await fetch(`/api/${endpoint}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(rest) });
+            if (res.ok) imported++;
+          }
+        }
+        alert(`Imported ${imported} items`);
+      } catch { alert("Import failed — check file format"); }
+    };
+    input.click();
+  };
+
+  const handlePDF = () => {
+    window.print();
+  };
+
   return (
     <div>
-      <h1 className="text-2xl font-bold tracking-tight mb-6" style={{ color: "var(--text-primary)" }}>
-        Dashboard
-      </h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>
+          Dashboard
+        </h1>
+        <div className="flex items-center gap-2">
+          <button onClick={handleImport} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all active:scale-[0.98]" style={{ border: "1px solid var(--border-color)", color: "var(--text-secondary)", background: "var(--card-bg)" }}>
+            <Upload className="w-4 h-4" /> Import
+          </button>
+          <button onClick={handleExport} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all active:scale-[0.98]" style={{ border: "1px solid var(--border-color)", color: "var(--text-secondary)", background: "var(--card-bg)" }}>
+            <FileDown className="w-4 h-4" /> Export
+          </button>
+          <button onClick={handlePDF} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium bg-aurora-500 hover:bg-aurora-400 text-white transition-all active:scale-[0.98]">
+            <Printer className="w-4 h-4" /> PDF
+          </button>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {cards.map((card) => {
