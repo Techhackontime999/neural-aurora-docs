@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import {
   FileText,
@@ -13,6 +13,8 @@ import {
   Upload,
   FileDown,
   Printer,
+  ChevronDown,
+  FileSpreadsheet,
 } from "lucide-react";
 
 interface Stats {
@@ -33,10 +35,144 @@ const cards = [
   { label: "Release Notes", href: "/admin/release-notes", icon: Megaphone, color: "text-cyan-500", bg: "bg-cyan-50 dark:bg-cyan-950/30", key: "releases" as const },
 ];
 
+const CSV_COLS = [
+  "table", "title", "slug", "content", "excerpt", "sort_order", "status",
+  "category_id", "name", "description", "icon", "project_type",
+  "version", "published_at", "video_url", "embed_url", "thumbnail_url", "is_published",
+] as const;
+
+function toCell(val: unknown): string {
+  if (val == null) return "";
+  const s = String(val);
+  return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+function dataToCSV(data: {
+  pages: Record<string, unknown>[];
+  categories: Record<string, unknown>[];
+  guides: Record<string, unknown>[];
+  releases: Record<string, unknown>[];
+  demos: Record<string, unknown>[];
+}): string {
+  const rows: string[] = [CSV_COLS.join(",")];
+  const push = (table: string, item: Record<string, unknown>) => {
+    rows.push(CSV_COLS.map((col) => toCell(col === "table" ? table : item[col])).join(","));
+  };
+  (data.pages || []).forEach((p) => push("pages", p));
+  (data.categories || []).forEach((c) => push("categories", c));
+  (data.guides || []).forEach((g) => push("guides", g));
+  (data.releases || []).forEach((r) => push("releases", r));
+  (data.demos || []).forEach((d) => push("demos", d));
+  return rows.join("\n");
+}
+
+interface CSVRow {
+  table: string;
+  [key: string]: string;
+}
+
+function parseCSV(text: string): CSVRow[] {
+  text = text.replace(/^\ufeff/, "");
+  let lines: string[] = [];
+  let current = "";
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === '"') {
+      if (inQuotes && text[i + 1] === '"') {
+        current += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (ch === "\n" && !inQuotes) {
+      lines.push(current);
+      current = "";
+    } else if (ch === "\r" && !inQuotes) {
+      continue;
+    } else {
+      current += ch;
+    }
+  }
+  if (current.trim()) lines.push(current);
+  lines = lines.filter((l) => l.trim());
+
+  if (lines.length < 2) return [];
+  const headers = parseCSVLine(lines[0]);
+  const tableIdx = headers.findIndex((h) => h.trim().toLowerCase() === "table");
+  if (tableIdx === -1) return [];
+
+  const result: CSVRow[] = [];
+  for (let i = 1; i < lines.length; i++) {
+    const vals = parseCSVLine(lines[i]);
+    if (vals.length === 0) continue;
+    const row: CSVRow = { table: vals[tableIdx]?.trim() || "" };
+    headers.forEach((h, j) => {
+      if (j !== tableIdx && j < vals.length) {
+        row[h.trim()] = vals[j];
+      }
+    });
+    result.push(row);
+  }
+  return result;
+}
+
+function parseCSVLine(line: string): string[] {
+  const vals: string[] = [];
+  let current = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (ch === "," && !inQuotes) {
+      vals.push(current.trim());
+      current = "";
+    } else {
+      current += ch;
+    }
+  }
+  vals.push(current.trim());
+  return vals;
+}
+
+const TABLE_ENDPOINT: Record<string, string> = {
+  pages: "docs",
+  categories: "categories",
+  guides: "installation-guides",
+  releases: "release-notes",
+  demos: "demos",
+};
+
+function stripMeta(item: Record<string, unknown>): Record<string, unknown> {
+  const { id, created_at, updated_at, category, ...rest } = item;
+  if (rest.category_id == null && category && typeof category === "object") {
+    rest.category_id = (category as Record<string, unknown>).id || (category as Record<string, unknown>).slug;
+  }
+  return rest;
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats>({
     pages: 0, categories: 0, users: 0, contributors: 0, guides: 0, releases: 0,
   });
+  const [exportOpen, setExportOpen] = useState(false);
+  const exportRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
+        setExportOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -72,43 +208,103 @@ export default function AdminDashboard() {
     return () => { cancelled = true; };
   }, []);
 
-  const handleExport = async () => {
-    try {
-      const [pages, categories, guides, releases, demos] = await Promise.all([
-        fetch("/api/docs").then((r) => r.ok ? r.json() : { pages: [] }),
-        fetch("/api/categories").then((r) => r.ok ? r.json() : { categories: [] }),
-        fetch("/api/installation-guides").then((r) => r.ok ? r.json() : { guides: [] }),
-        fetch("/api/release-notes").then((r) => r.ok ? r.json() : { releases: [] }),
-        fetch("/api/demos").then((r) => r.ok ? r.json() : { demos: [] }),
-      ]);
+  async function fetchAll() {
+    const [pages, categories, guides, releases, demos] = await Promise.all([
+      fetch("/api/docs").then((r) => r.ok ? r.json() : { pages: [] }),
+      fetch("/api/categories").then((r) => r.ok ? r.json() : { categories: [] }),
+      fetch("/api/installation-guides").then((r) => r.ok ? r.json() : { guides: [] }),
+      fetch("/api/release-notes").then((r) => r.ok ? r.json() : { releases: [] }),
+      fetch("/api/demos").then((r) => r.ok ? r.json() : { demos: [] }),
+    ]);
+    return {
+      pages: pages.pages || [],
+      categories: categories.categories || [],
+      guides: guides.guides || [],
+      releases: releases.releases || [],
+      demos: demos.demos || [],
+    };
+  }
 
-      const data = { pages: pages.pages, categories: categories.categories, guides: guides.guides, releases: releases.releases, demos: demos.demos };
+  function downloadBlob(blob: Blob, filename: string) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    a.click(); URL.revokeObjectURL(url);
+  }
+
+  const handleExportJSON = async () => {
+    setExportOpen(false);
+    try {
+      const data = await fetchAll();
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = `neural-aurora-docs-export-${new Date().toISOString().slice(0, 10)}.json`;
-      a.click(); URL.revokeObjectURL(url);
+      downloadBlob(blob, `neural-aurora-docs-export-${new Date().toISOString().slice(0, 10)}.json`);
+    } catch { alert("Export failed"); }
+  };
+
+  const handleExportCSV = async () => {
+    setExportOpen(false);
+    try {
+      const data = await fetchAll();
+      const csv = dataToCSV(data);
+      const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
+      downloadBlob(blob, `neural-aurora-docs-export-${new Date().toISOString().slice(0, 10)}.csv`);
     } catch { alert("Export failed"); }
   };
 
   const handleImport = () => {
     const input = document.createElement("input");
-    input.type = "file"; input.accept = ".json";
+    input.type = "file"; input.accept = ".json,.csv";
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
       try {
         const text = await file.text();
-        const data = JSON.parse(text);
         let imported = 0;
-        for (const table of ["pages", "categories", "guides", "releases", "demos"] as const) {
-          const items = data[table];
-          if (!items?.length) continue;
-          const endpoint = table === "pages" ? "docs" : table === "guides" ? "installation-guides" : table === "releases" ? "release-notes" : table;
-          for (const item of items) {
-            const { id, created_at, updated_at, ...rest } = item;
-            const res = await fetch(`/api/${endpoint}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(rest) });
-            if (res.ok) imported++;
+
+          if (file.name.endsWith(".csv")) {
+            const rows = parseCSV(text);
+            const grouped: Record<string, CSVRow[]> = {};
+            for (const row of rows) {
+              if (!row.table) continue;
+              if (!grouped[row.table]) grouped[row.table] = [];
+              grouped[row.table].push(row);
+            }
+            for (const [table, items] of Object.entries(grouped)) {
+              const endpoint = TABLE_ENDPOINT[table];
+              if (!endpoint) continue;
+              for (const item of items) {
+                const { table: _, ...rest } = item;
+                const metaStripped = stripMeta(rest as unknown as Record<string, unknown>);
+                const body: Record<string, unknown> = {};
+                for (const [k, v] of Object.entries(metaStripped)) {
+                  if (v === "" || v == null) continue;
+                  if (v === "true") { body[k] = true; continue; }
+                  if (v === "false") { body[k] = false; continue; }
+                  const num = Number(v);
+                  body[k] = String(num) === v ? num : v;
+                }
+                const res = await fetch(`/api/${endpoint}`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(body),
+              });
+              if (res.ok) imported++;
+            }
+          }
+        } else {
+          const data = JSON.parse(text);
+          for (const table of ["pages", "categories", "guides", "releases", "demos"] as const) {
+            const items = data[table];
+            if (!items?.length) continue;
+            const endpoint = TABLE_ENDPOINT[table];
+            for (const item of items) {
+              const res = await fetch(`/api/${endpoint}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(stripMeta(item)),
+              });
+              if (res.ok) imported++;
+            }
           }
         }
         alert(`Imported ${imported} items`);
@@ -118,7 +314,7 @@ export default function AdminDashboard() {
   };
 
   const handlePDF = () => {
-    window.print();
+    window.location.href = "/admin/print";
   };
 
   return (
@@ -131,9 +327,38 @@ export default function AdminDashboard() {
           <button onClick={handleImport} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all active:scale-[0.98]" style={{ border: "1px solid var(--border-color)", color: "var(--text-secondary)", background: "var(--card-bg)" }}>
             <Upload className="w-4 h-4" /> Import
           </button>
-          <button onClick={handleExport} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all active:scale-[0.98]" style={{ border: "1px solid var(--border-color)", color: "var(--text-secondary)", background: "var(--card-bg)" }}>
-            <FileDown className="w-4 h-4" /> Export
-          </button>
+
+          <div className="relative" ref={exportRef}>
+            <button
+              onClick={() => setExportOpen(!exportOpen)}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all active:scale-[0.98]"
+              style={{ border: "1px solid var(--border-color)", color: "var(--text-secondary)", background: "var(--card-bg)" }}
+            >
+              <FileDown className="w-4 h-4" /> Export <ChevronDown className={`w-3 h-3 transition-transform ${exportOpen ? "rotate-180" : ""}`} />
+            </button>
+            {exportOpen && (
+              <div
+                className="absolute right-0 mt-1 w-44 rounded-lg overflow-hidden z-50"
+                style={{ border: "1px solid var(--border-color)", background: "var(--card-bg)", boxShadow: "var(--shadow-diffusion)" }}
+              >
+                <button
+                  onClick={handleExportJSON}
+                  className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm transition-colors hover:opacity-80"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  <FileDown className="w-4 h-4" /> Export as JSON
+                </button>
+                <button
+                  onClick={handleExportCSV}
+                  className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm transition-colors hover:opacity-80"
+                  style={{ color: "var(--text-secondary)", borderTop: "1px solid var(--border-color)" }}
+                >
+                  <FileSpreadsheet className="w-4 h-4" /> Export as CSV
+                </button>
+              </div>
+            )}
+          </div>
+
           <button onClick={handlePDF} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium bg-aurora-500 hover:bg-aurora-400 text-white transition-all active:scale-[0.98]">
             <Printer className="w-4 h-4" /> PDF
           </button>

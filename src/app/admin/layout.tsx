@@ -74,7 +74,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
   if (!user || !profile || profile.is_approved !== true) return null;
 
   return (
-    <div className="h-screen flex flex-col" style={{ background: "var(--bg-primary)" }}>
+    <div data-admin-layout className="h-screen flex flex-col" style={{ background: "var(--bg-primary)" }}>
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
