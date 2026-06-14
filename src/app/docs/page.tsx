@@ -227,7 +227,7 @@ export default function DocsPage() {
       </motion.div>
 
       <button
-        onClick={() => router.push("/admin/print")}
+        onClick={() => router.push("/print")}
         className="fixed bottom-20 right-6 z-50 flex h-10 w-10 items-center justify-center rounded-full text-white shadow-lg transition-all active:scale-[0.93] print:hidden"
         style={{ background: "linear-gradient(135deg, #8b5cf6, #a78bfa)" }}
         aria-label="Download Documentation PDF"
