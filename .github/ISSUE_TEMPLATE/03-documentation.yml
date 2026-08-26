@@ -1,0 +1,61 @@
+name: Documentation Improvement
+description: Suggest improvements or report missing documentation
+title: "[Docs]: "
+labels: ["documentation", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Documentation Feedback
+
+        Help us improve our documentation!
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: What kind of documentation change?
+      options:
+        - Missing documentation
+        - Incorrect information
+        - Unclear explanation
+        - Outdated content
+        - New feature needs docs
+        - Typo or formatting issue
+    validations:
+      required: true
+
+  - type: input
+    id: page
+    attributes:
+      label: Page / Section
+      description: Which page or section is this about?
+      placeholder: "e.g. /docs/getting-started, README.md, Admin Panel"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the documentation improvement needed.
+      placeholder: Describe what's missing, incorrect, or unclear...
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Change
+      description: If you know what the documentation should say, describe it here.
+      placeholder: Suggested wording or content...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues to avoid duplicates
+          required: true

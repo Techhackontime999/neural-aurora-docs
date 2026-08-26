@@ -1,0 +1,68 @@
+name: Support Question
+description: Ask a question about setup, usage, or configuration
+title: "[Question]: "
+labels: ["question", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Question
+
+        Before asking, please check:
+        - [Documentation](https://neural-aurora-docs.vercel.app)
+        - [Existing Issues](https://github.com/Techhackontime999/neural-aurora-docs/issues)
+        - [CONTRIBUTING.md](../CONTRIBUTING.md)
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+      placeholder: Describe your question...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: What have you tried?
+      description: Describe what you've already tried or researched.
+      placeholder: "I've tried..."
+    validations:
+      required: false
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: What area does your question relate to?
+      options:
+        - Setup / Installation
+        - Authentication
+        - Admin Panel
+        - AI Assistant
+        - Database
+        - Deployment
+        - API Usage
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Your relevant environment details.
+      placeholder: "e.g. Node 20, Windows 11, Chrome 120"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      options:
+        - label: I have checked the documentation
+          required: true
+        - label: I have searched existing issues
+          required: true

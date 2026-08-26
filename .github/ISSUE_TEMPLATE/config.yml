@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://neural-aurora-docs.vercel.app
+    about: Check the documentation before filing an issue
+  - name: Discussions
+    url: https://github.com/Techhackontime999/neural-aurora-docs/discussions
+    about: Ask questions and discuss ideas here

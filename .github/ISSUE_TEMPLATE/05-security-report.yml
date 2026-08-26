@@ -1,0 +1,78 @@
+name: Security Report
+description: Report a security vulnerability (will be visible only to maintainers)
+title: "[Security]: "
+labels: ["security"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Security Vulnerability Report
+
+        **Note:** This issue will be visible only to repository maintainers.
+
+        Please provide as much detail as possible about the vulnerability.
+        Do NOT include exploit code or sensitive data in this report.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Vulnerability Description
+      description: Describe the security vulnerability.
+      placeholder: Describe the vulnerability...
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Potential Impact
+      description: What is the potential impact of this vulnerability?
+      placeholder: "An attacker could..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can this vulnerability be reproduced? Do NOT include exploit code.
+      placeholder: Describe the steps...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe do you consider this vulnerability?
+      options:
+        - Low
+        - Medium
+        - High
+        - Critical
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Affected Version
+      placeholder: "e.g. 0.1.0"
+    validations:
+      required: false
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Fix
+      description: If you have a suggestion for how to fix the vulnerability, describe it here.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Acknowledgment
+      options:
+        - label: I agree to report vulnerabilities responsibly and not publicly disclose details until a fix is available
+          required: true
