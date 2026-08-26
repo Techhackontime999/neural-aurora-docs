@@ -1,6 +1,11 @@
 # Neural Aurora Docs
 
-Official documentation hub for [NEURAL AURORA](https://github.com/Techhackontime999/NEURAL-AURORA) (The Synaptic Portfolio) and [WACRM](https://github.com/Techhackontime999/WACRM) (WhatsApp CRM Template).
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Good First Issue](https://img.shields.io/badge/Good%20First%20Issue-purple.svg)](https://github.com/Techhackontime999/neural-aurora-docs/labels/good%20first%20issue)
+[![Help Wanted](https://img.shields.io/badge/Help%20Wanted-green.svg)](https://github.com/Techhackontime999/neural-aurora-docs/labels/help%20wanted)
+
+Universal automated documentation platform — one-click docs for any project.
 
 Built with **Next.js 16**, **Supabase**, **Tailwind CSS v4**, and the **taste-skill** design system.
 
@@ -230,8 +235,59 @@ All database tables have RLS policies:
 - Whitelisted column lists in all update operations
 - TypeScript strict mode catches type mismatches at build time
 
+## Contributing
+
+We welcome contributions! This project is open source and we'd love your help.
+
+- **New contributors?** Start with [good first issues](https://github.com/Techhackontime999/neural-aurora-docs/labels/good%20first%20issue)
+- **Found a bug?** [Report it](https://github.com/Techhackontime999/neural-aurora-docs/issues/new?template=01-bug-report.yml)
+- **Have an idea?** [Request a feature](https://github.com/Techhackontime999/neural-aurora-docs/issues/new?template=02-feature-request.yml)
+- **Read the [Contributing Guide](.github/CONTRIBUTING.md)** for setup instructions and PR process
+- **Join the [Discussions](https://github.com/Techhackontime999/neural-aurora-docs/discussions)** for questions and ideas
+
+See the [roadmap](#roadmap) below for what we're building next.
+
+## Roadmap
+
+We're building a **universal automated documentation platform** — one-click docs for any project.
+
+### Phase 1: Contributor Infrastructure
+
+- [x] Issue templates, labels, contributing guide
+- [x] MIT License, Code of Conduct, PR template
+- [x] Welcome workflow for first-time contributors
+
+### Phase 2: Multi-Tenancy & Core Platform
+
+- [ ] Multi-organization support with team management
+- [ ] Git repository integration for auto-sync
+- [ ] AI-powered documentation generation (multi-provider)
+- [ ] Documentation template system with gallery
+- [ ] One-click project setup wizard
+
+### Phase 3: Enhanced Features
+
+- [ ] Docker self-hosted deployment
+- [ ] Documentation versioning
+- [ ] OpenAPI/Swagger auto-generation
+- [ ] Markdown import/export
+- [ ] Real-time collaborative editing
+- [ ] Documentation analytics
+- [ ] Custom domain support
+- [ ] Webhook-based auto-sync
+
+### Phase 4: Polish & Scale
+
+- [ ] Mobile responsiveness improvements
+- [ ] Performance optimization (3D background)
+- [ ] Self-hosted deployment guide
+- [ ] API documentation
+- [ ] Video tutorials
+
+**[View all open issues →](https://github.com/Techhackontime999/neural-aurora-docs/issues)**
+
 ## License
 
-MIT — see the [NEURAL AURORA](https://github.com/Techhackontime999/NEURAL-AURORA) and [WACRM](https://github.com/Techhackontime999/WACRM) repositories for license details.
+MIT — see [LICENSE](LICENSE) for details.
 
 Built by [Techhackontime999](https://github.com/Techhackontime999).
